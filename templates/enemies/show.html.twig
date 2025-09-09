@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enemies{% endblock %}
+
+{% block body %}
+    <h1>Enemies</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ enemy.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ enemy.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ enemy.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Vida</th>
+                <td>{{ enemy.vida }}</td>
+            </tr>
+            <tr>
+                <th>Damage</th>
+                <td>{{ enemy.damage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_enemies_index') }}">back to list</a>
+
+    <a href="{{ path('app_enemies_edit', {'id': enemy.id}) }}">edit</a>
+
+    {{ include('enemies/_delete_form.html.twig') }}
+{% endblock %}

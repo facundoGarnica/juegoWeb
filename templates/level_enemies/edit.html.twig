@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit LevelEnemies{% endblock %}
+
+{% block body %}
+    <h1>Edit LevelEnemies</h1>
+
+    {{ include('level_enemies/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_level_enemies_index') }}">back to list</a>
+
+    {{ include('level_enemies/_delete_form.html.twig') }}
+{% endblock %}

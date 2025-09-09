@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New LevelEnemies{% endblock %}
+
+{% block body %}
+    <h1>Create new LevelEnemies</h1>
+
+    {{ include('level_enemies/_form.html.twig') }}
+
+    <a href="{{ path('app_level_enemies_index') }}">back to list</a>
+{% endblock %}

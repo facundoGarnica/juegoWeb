@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sprite index{% endblock %}
+
+{% block body %}
+    <h1>Sprite index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>ImagenPath</th>
+                <th>Action</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sprite in sprites %}
+            <tr>
+                <td>{{ sprite.id }}</td>
+                <td>{{ sprite.imagenPath }}</td>
+                <td>{{ sprite.action }}</td>
+                <td>
+                    <a href="{{ path('app_sprite_show', {'id': sprite.id}) }}">show</a>
+                    <a href="{{ path('app_sprite_edit', {'id': sprite.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_sprite_new') }}">Create new</a>
+{% endblock %}

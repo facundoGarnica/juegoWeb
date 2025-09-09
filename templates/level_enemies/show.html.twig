@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LevelEnemies{% endblock %}
+
+{% block body %}
+    <h1>LevelEnemies</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ level_enemy.id }}</td>
+            </tr>
+            <tr>
+                <th>Cantidad</th>
+                <td>{{ level_enemy.cantidad }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_level_enemies_index') }}">back to list</a>
+
+    <a href="{{ path('app_level_enemies_edit', {'id': level_enemy.id}) }}">edit</a>
+
+    {{ include('level_enemies/_delete_form.html.twig') }}
+{% endblock %}

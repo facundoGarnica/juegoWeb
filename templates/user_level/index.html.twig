@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserLevel index{% endblock %}
+
+{% block body %}
+    <h1>UserLevel index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Completado</th>
+                <th>Tiempo_usado</th>
+                <th>PuntosObtenidos</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user_level in user_levels %}
+            <tr>
+                <td>{{ user_level.id }}</td>
+                <td>{{ user_level.completado ? 'Yes' : 'No' }}</td>
+                <td>{{ user_level.tiempoUsado }}</td>
+                <td>{{ user_level.puntosObtenidos }}</td>
+                <td>
+                    <a href="{{ path('app_user_level_show', {'id': user_level.id}) }}">show</a>
+                    <a href="{{ path('app_user_level_edit', {'id': user_level.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_level_new') }}">Create new</a>
+{% endblock %}

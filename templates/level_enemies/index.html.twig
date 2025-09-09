@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LevelEnemies index{% endblock %}
+
+{% block body %}
+    <h1>LevelEnemies index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Cantidad</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for level_enemy in level_enemies %}
+            <tr>
+                <td>{{ level_enemy.id }}</td>
+                <td>{{ level_enemy.cantidad }}</td>
+                <td>
+                    <a href="{{ path('app_level_enemies_show', {'id': level_enemy.id}) }}">show</a>
+                    <a href="{{ path('app_level_enemies_edit', {'id': level_enemy.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_level_enemies_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sprite{% endblock %}
+
+{% block body %}
+    <h1>Sprite</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sprite.id }}</td>
+            </tr>
+            <tr>
+                <th>ImagenPath</th>
+                <td>{{ sprite.imagenPath }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>{{ sprite.action }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_sprite_index') }}">back to list</a>
+
+    <a href="{{ path('app_sprite_edit', {'id': sprite.id}) }}">edit</a>
+
+    {{ include('sprite/_delete_form.html.twig') }}
+{% endblock %}

@@ -33,11 +33,15 @@ class User implements UserInterface
     #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'user')]
     private Collection $scores;
 
+    #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'user_id')]
+    private Collection $sprites;
+
     public function __construct()
     {
         $this->userItems = new ArrayCollection();
         $this->userLevels = new ArrayCollection();
         $this->scores = new ArrayCollection();
+        $this->sprites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -179,6 +183,36 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($score->getUser() === $this) {
                 $score->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sprite>
+     */
+    public function getSprites(): Collection
+    {
+        return $this->sprites;
+    }
+
+    public function addSprite(Sprite $sprite): static
+    {
+        if (!$this->sprites->contains($sprite)) {
+            $this->sprites->add($sprite);
+            $sprite->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSprite(Sprite $sprite): static
+    {
+        if ($this->sprites->removeElement($sprite)) {
+            // set the owning side to null (unless already changed)
+            if ($sprite->getUserId() === $this) {
+                $sprite->setUserId(null);
             }
         }
 

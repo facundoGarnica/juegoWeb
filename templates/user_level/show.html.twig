@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserLevel{% endblock %}
+
+{% block body %}
+    <h1>UserLevel</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user_level.id }}</td>
+            </tr>
+            <tr>
+                <th>Completado</th>
+                <td>{{ user_level.completado ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Tiempo_usado</th>
+                <td>{{ user_level.tiempoUsado }}</td>
+            </tr>
+            <tr>
+                <th>PuntosObtenidos</th>
+                <td>{{ user_level.puntosObtenidos }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_level_index') }}">back to list</a>
+
+    <a href="{{ path('app_user_level_edit', {'id': user_level.id}) }}">edit</a>
+
+    {{ include('user_level/_delete_form.html.twig') }}
+{% endblock %}

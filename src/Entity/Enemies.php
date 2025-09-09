@@ -30,9 +30,13 @@ class Enemies
     #[ORM\OneToMany(targetEntity: LevelEnemies::class, mappedBy: 'enemies')]
     private Collection $levelEnemies;
 
+    #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'enemies_id')]
+    private Collection $sprites;
+
     public function __construct()
     {
         $this->levelEnemies = new ArrayCollection();
+        $this->sprites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,6 +116,36 @@ class Enemies
             // set the owning side to null (unless already changed)
             if ($levelEnemy->getEnemies() === $this) {
                 $levelEnemy->setEnemies(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sprite>
+     */
+    public function getSprites(): Collection
+    {
+        return $this->sprites;
+    }
+
+    public function addSprite(Sprite $sprite): static
+    {
+        if (!$this->sprites->contains($sprite)) {
+            $this->sprites->add($sprite);
+            $sprite->setEnemiesId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSprite(Sprite $sprite): static
+    {
+        if ($this->sprites->removeElement($sprite)) {
+            // set the owning side to null (unless already changed)
+            if ($sprite->getEnemiesId() === $this) {
+                $sprite->setEnemiesId(null);
             }
         }
 

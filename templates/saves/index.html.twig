@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saves index{% endblock %}
+
+{% block body %}
+    <h1>Saves index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Pos_x</th>
+                <th>Pos_y</th>
+                <th>VidasRestantes</th>
+                <th>Fecha_guardado</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for save in saves %}
+            <tr>
+                <td>{{ save.id }}</td>
+                <td>{{ save.posX }}</td>
+                <td>{{ save.posY }}</td>
+                <td>{{ save.vidasRestantes }}</td>
+                <td>{{ save.fechaGuardado ? save.fechaGuardado|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_saves_show', {'id': save.id}) }}">show</a>
+                    <a href="{{ path('app_saves_edit', {'id': save.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_saves_new') }}">Create new</a>
+{% endblock %}

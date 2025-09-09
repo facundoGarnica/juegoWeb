@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Sprite{% endblock %}
+
+{% block body %}
+    <h1>Edit Sprite</h1>
+
+    {{ include('sprite/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_sprite_index') }}">back to list</a>
+
+    {{ include('sprite/_delete_form.html.twig') }}
+{% endblock %}

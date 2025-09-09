@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Sprite{% endblock %}
+
+{% block body %}
+    <h1>Create new Sprite</h1>
+
+    {{ include('sprite/_form.html.twig') }}
+
+    <a href="{{ path('app_sprite_index') }}">back to list</a>
+{% endblock %}
