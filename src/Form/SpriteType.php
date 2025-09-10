@@ -16,6 +16,7 @@ class SpriteType extends AbstractType
             ->add('action')
             ->add('user')
             ->add('enemies')
+            ->add('game')
         ;
     }
 

@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CRUD Dashboard{% endblock %}
+
+{% block body %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+    }
+
+    #cruds {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .crud-section {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 20px;
+        flex: 1 1 300px;
+    }
+
+    .crud-section h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+    }
+
+    .crud-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .crud-buttons a {
+        text-decoration: none;
+    }
+
+    .crud-buttons button {
+        padding: 10px 15px;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .crud-buttons button:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+    }
+
+    .home-button {
+        margin-top: 20px;
+        display: inline-block;
+    }
+
+</style>
+
+<section id="cruds">
+    
+    <div class="crud-section">
+        <h3>Personajes CRUD</h3>
+        <div class="crud-buttons">
+            <a href="{{ path('app_enemies_index') }}"><button>Index Enemigos</button></a>
+            <a href="{{ path('app_user_item_index') }}"><button>Index Usuario Item</button></a>
+            <a href="{{ path('app_user_level_index') }}"><button>Index Usuario Level</button></a>
+        </div>
+    </div>
+
+    <div class="crud-section">
+        <h3>Items y Niveles</h3>
+        <div class="crud-buttons">
+            <a href="{{ path('app_game_index') }}"><button>Index Game</button></a>
+            <a href="{{ path('app_item_index') }}"><button>Index Items</button></a>
+            <a href="{{ path('app_level_index') }}"><button>Index Niveles</button></a>
+            <a href="{{ path('app_saves_index') }}"><button>Index Saves</button></a>
+        </div>
+    </div>
+
+    <div class="crud-section">
+        <h3>Otros CRUDs</h3>
+        <div class="crud-buttons">
+            <a href="{{ path('app_score_index') }}"><button>Index Puntajes</button></a>
+            <a href="{{ path('app_sprite_index') }}"><button>Index Sprites</button></a>
+        </div>
+    </div>
+
+</section>
+
+<div class="home-button">
+    <a href="{{ path('app_home') }}"><button>Regresar al Home</button></a>
+</div>
+
+{% endblock %}

@@ -15,6 +15,7 @@ class LevelType extends AbstractType
             ->add('nombre')
             ->add('descripcion')
             ->add('dificultad')
+            ->add('game')
         ;
     }
 

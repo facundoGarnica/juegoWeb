@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\LevelEnemiesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Level;
+use App\Entity\Enemies;
 
 #[ORM\Entity(repositoryClass: LevelEnemiesRepository::class)]
 class LevelEnemies
@@ -13,11 +15,11 @@ class LevelEnemies
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'levelEnemies')]
+    #[ORM\ManyToOne(targetEntity: Level::class, inversedBy: 'levelEnemies')]
     private ?Level $level = null;
 
-    #[ORM\ManyToOne(inversedBy: 'levelEnemies')]
-    private ?enemies $enemies = null;
+    #[ORM\ManyToOne(targetEntity: Enemies::class, inversedBy: 'levelEnemies')]
+    private ?Enemies $enemies = null;
 
     #[ORM\Column]
     private ?int $cantidad = null;
@@ -35,19 +37,17 @@ class LevelEnemies
     public function setLevel(?Level $level): static
     {
         $this->level = $level;
-
         return $this;
     }
 
-    public function getEnemies(): ?enemies
+    public function getEnemies(): ?Enemies
     {
         return $this->enemies;
     }
 
-    public function setEnemies(?enemies $enemies): static
+    public function setEnemies(?Enemies $enemies): static
     {
         $this->enemies = $enemies;
-
         return $this;
     }
 
@@ -59,7 +59,6 @@ class LevelEnemies
     public function setCantidad(int $cantidad): static
     {
         $this->cantidad = $cantidad;
-
         return $this;
     }
 }

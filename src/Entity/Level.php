@@ -30,6 +30,9 @@ class Level
     #[ORM\OneToMany(targetEntity: LevelEnemies::class, mappedBy: 'level')]
     private Collection $levelEnemies;
 
+    #[ORM\ManyToOne(inversedBy: 'levels')]
+    private ?Game $game = null;
+
     public function __construct()
     {
         $this->userLevels = new ArrayCollection();
@@ -133,6 +136,22 @@ class Level
                 $levelEnemy->setLevel(null);
             }
         }
+
+        return $this;
+    }
+    public function __toString(): string
+    {
+        return (string) $this->nombre;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

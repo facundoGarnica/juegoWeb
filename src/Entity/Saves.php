@@ -31,6 +31,9 @@ class Saves
     #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'saves')]
     private Collection $scores;
 
+    #[ORM\ManyToOne(inversedBy: 'saves')]
+    private ?Game $game = null;
+
     public function __construct()
     {
         $this->scores = new ArrayCollection();
@@ -117,5 +120,21 @@ class Saves
         }
 
         return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
+
+        return $this;
+    }
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 }

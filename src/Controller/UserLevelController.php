@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\UserLevel;
-use App\Form\UserLevelType;
+use App\Form\UserLevel1Type;
 use App\Repository\UserLevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ class UserLevelController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $userLevel = new UserLevel();
-        $form = $this->createForm(UserLevelType::class, $userLevel);
+        $form = $this->createForm(UserLevel1Type::class, $userLevel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +53,7 @@ class UserLevelController extends AbstractController
     #[Route('/{id}/edit', name: 'app_user_level_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, UserLevel $userLevel, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(UserLevelType::class, $userLevel);
+        $form = $this->createForm(UserLevel1Type::class, $userLevel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

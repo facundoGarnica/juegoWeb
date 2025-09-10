@@ -12,6 +12,7 @@
                 <th>Nombre</th>
                 <th>Descripcion</th>
                 <th>Dificultad</th>
+                <th>Game</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
                 <td>{{ level.nombre }}</td>
                 <td>{{ level.descripcion }}</td>
                 <td>{{ level.dificultad }}</td>
+                <td>{{ level.game }}</td>
                 <td>
                     <a href="{{ path('app_level_show', {'id': level.id}) }}">show</a>
                     <a href="{{ path('app_level_edit', {'id': level.id}) }}">edit</a>

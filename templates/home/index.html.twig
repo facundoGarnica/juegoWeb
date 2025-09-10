@@ -1,20 +1,130 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Hello HomeController!{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<a href="{{ path('app_formularios') }}">
+    <button>Menu Formularios</button>
+</a>
+<h1 id="titulo">CodeJuegos = ["Facu", "Marian"]</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/xampp/htdocs/juegoweb/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/xampp/htdocs/juegoweb/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
+<!-- Mensajes flash -->
+{% for message in app.flashes('error') %}
+    <div style="background: red; color: white; padding: 10px; margin: 10px 0;">
+        Error: {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('info') %}
+    <div style="background: blue; color: white; padding: 10px; margin: 10px 0;">
+        Info: {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('success') %}
+    <div style="background: green; color: white; padding: 10px; margin: 10px 0;">
+        Éxito: {{ message }}
+    </div>
+{% endfor %}
+
+<p id="descripcion">
+    Bienvenido a <strong>CodeJuegos</strong>, un playground de juegos.  
+    Proyectos creados desde cero por Facu y Marian, combinando programación y análisis.  
+    ¡Explora, juega y danos un feedback!
+</p>
+
+
+<div id="BienvenidoUser">
+    {% if app.user %}
+        <p>Bienvenido, {{ app.user.username }}!</p>
+        <a href="{{ path('app_logout') }}">Cerrar sesión</a>
+    {% else %}
+        <p>Bienvenido, invitado!</p>
+        <a href="#" id="openModal">Iniciar sesión</a> o
+        <a href="#" id="openRegisterModal">Registrarse</a>
+    {% endif %}
 </div>
+
+<div id="contenedor_menu">
+    <button id="nosotros">Sobre nosotros</button>
+    <button id="detrasEscenas">Detrás de escenas</button>
+    <button id="contacto">Contacto</button>
+</div>
+
+<div id="CarruselJuegos">
+    <h2>Nuestros Juegos</h2>
+    <div class="carousel">
+        {% for game in games %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}" data-game-id="{{ game.id }}">
+                <img alt="{{ game.nombre }}" src="{{ asset('images/' ~ game.imagenPortada) }}" title="{{ game.nombre }}">
+                <div class="play-overlay">
+                    JUGAR
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control prev" id="prevBtn">&#10094;</button>
+    <button class="carousel-control next" id="nextBtn">&#10095;</button>
+</div>
+
+<script>
+    const userId = {{ app.user ? app.user.id : 'null' }};
+</script>
+
+<section id="topMejores">
+    <h2>Top Mejores 4 puntajes</h2>
+    <div id="topScoresContainer">
+        <p>Selecciona un juego para ver los mejores puntajes.</p>
+    </div>
+</section>
+
+
+<!-- Modal de Registro -->
+<div id="modalRegister" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span id="closeRegisterModal">&times;</span>
+        <h2>Registro</h2>
+        {{ form_errors(registrationForm) }}
+        {{ form_start(registrationForm, {'action': path('app_register'), 'attr': {'id': 'registrationFormModal'}}) }}
+            {{ form_row(registrationForm.username) }}
+            {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+            <button type="submit" class="btn btn-primary mt-2">Register</button>
+        {{ form_end(registrationForm) }}
+        <button type="button" id="togglePasswordModal" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
+    </div>
+</div>
+
+<!-- Modal de Login -->
+<div id="modalLogin" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span id="closeModal">&times;</span>
+        <h2>Iniciar Sesión</h2>
+        {% include 'security/login.html.twig' %}
+    </div>
+</div>
+
+<!-- Modal cartel de error -->
+<div id="modalError">
+    <div class="modal-box">
+        <p>Se debe iniciar sesión para jugar.</p>
+        <button id="closeErrorModal">Cerrar</button>
+    </div>
+</div>
+
+
+<footer id="footer">
+    <p>Seguinos en:</p>
+    <ul>
+        <li><a href="https://www.facebook.com/ArrayRun">Facebook</a></li>
+        <li><a href="https://www.twitter.com/ArrayRun">Twitter</a></li>
+        <li><a href="https://www.instagram.com/ArrayRun">Instagram</a></li>
+    </ul>
+</footer>
+
+<script src="{{ asset('js/home.js') }}"></script>
+
+<script>
+
+</script>
 {% endblock %}

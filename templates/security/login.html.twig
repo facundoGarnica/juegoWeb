@@ -1,42 +1,44 @@
-{% extends 'base.html.twig' %}
+{% if error %}
+    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
 
-{% block title %}Log in!{% endblock %}
+<form method="post" action="{{ path('app_login_check') }}">
+    <div class="mb-3">
+        <label for="inputUsername" class="form-label">Usuario</label>
+        <input type="text" value="{{ last_username }}" name="_username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
+    </div>
+    
+    <div class="mb-3">
+        <label for="inputPassword" class="form-label">Contraseña</label>
+        <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+    </div>
 
-{% block body %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
+    <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
+</form>
 
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="username">Username</label>
-        <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
-        <label for="password">Password</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
-
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
-
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" name="_remember_me"> Remember me
-                </label>
-            </div>
-        #}
-
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
-    </form>
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('inputPassword');
+    if (passwordInput && !document.getElementById('togglePassword')) {
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.id = 'togglePassword';
+        toggleButton.className = 'btn btn-secondary mt-2';
+        toggleButton.textContent = 'Mostrar Contraseña';
+        
+        toggleButton.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Ocultar Contraseña';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Mostrar Contraseña';
+            }
+        });
+        
+        passwordInput.parentNode.appendChild(toggleButton);
+    }
+});
+</script>

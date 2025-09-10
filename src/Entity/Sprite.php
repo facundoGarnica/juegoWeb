@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\SpriteRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
+use App\Entity\Enemies;
 
 #[ORM\Entity(repositoryClass: SpriteRepository::class)]
 class Sprite
@@ -13,10 +15,10 @@ class Sprite
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sprites')]
-    private ?user $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'sprites')]
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sprites')]
+    #[ORM\ManyToOne(targetEntity: Enemies::class, inversedBy: 'sprites')]
     private ?Enemies $enemies = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -25,20 +27,22 @@ class Sprite
     #[ORM\Column(length: 20)]
     private ?string $action = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sprites')]
+    private ?Game $game = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -50,7 +54,6 @@ class Sprite
     public function setEnemies(?Enemies $enemies): static
     {
         $this->enemies = $enemies;
-
         return $this;
     }
 
@@ -62,7 +65,6 @@ class Sprite
     public function setImagenPath(?string $imagenPath): static
     {
         $this->imagenPath = $imagenPath;
-
         return $this;
     }
 
@@ -74,6 +76,17 @@ class Sprite
     public function setAction(string $action): static
     {
         $this->action = $action;
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

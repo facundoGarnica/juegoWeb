@@ -33,6 +33,9 @@ class Enemies
     #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'enemies_id')]
     private Collection $sprites;
 
+    #[ORM\ManyToOne(inversedBy: 'enemies')]
+    private ?Game $game = null;
+
     public function __construct()
     {
         $this->levelEnemies = new ArrayCollection();
@@ -148,6 +151,22 @@ class Enemies
                 $sprite->setEnemiesId(null);
             }
         }
+
+        return $this;
+    }
+    public function __toString(): string
+    {
+        return (string) $this->nombre;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

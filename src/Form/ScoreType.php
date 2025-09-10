@@ -16,6 +16,7 @@ class ScoreType extends AbstractType
             ->add('fecha_guardado')
             ->add('user')
             ->add('saves')
+            ->add('game')
         ;
     }
 

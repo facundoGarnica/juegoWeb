@@ -21,28 +21,33 @@ class UserLevelRepository extends ServiceEntityRepository
         parent::__construct($registry, UserLevel::class);
     }
 
-//    /**
-//     * @return UserLevel[] Returns an array of UserLevel objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Obtiene los mejores UserLevel completados, ordenados por puntos descendentes
+     *
+     * @param int $limit Número máximo de resultados
+     * @return UserLevel[]
+     */
+    public function findTopScores(int $limit = 4): array
+    {
+        return $this->createQueryBuilder('ul')
+            ->andWhere('ul.completado = :val')
+            ->setParameter('val', true)
+            ->orderBy('ul.puntosObtenidos', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?UserLevel
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findTopScoresByGame($game, int $limit = 4): array
+    {
+        return $this->createQueryBuilder('ul')
+            ->andWhere('ul.completado = :val')
+            ->andWhere('ul.game = :game')
+            ->setParameter('val', true)
+            ->setParameter('game', $game)
+            ->orderBy('ul.puntosObtenidos', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

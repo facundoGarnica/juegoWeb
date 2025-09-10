@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ScoreRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
+use App\Entity\Saves;
 
 #[ORM\Entity(repositoryClass: ScoreRepository::class)]
 class Score
@@ -14,10 +16,10 @@ class Score
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'scores')]
-    private ?user $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'scores')]
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'scores')]
+    #[ORM\ManyToOne(targetEntity: Saves::class, inversedBy: 'scores')]
     private ?Saves $saves = null;
 
     #[ORM\Column]
@@ -26,20 +28,22 @@ class Score
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $fecha_guardado = null;
 
+    #[ORM\ManyToOne(inversedBy: 'scores')]
+    private ?Game $game = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -51,7 +55,6 @@ class Score
     public function setSaves(?Saves $saves): static
     {
         $this->saves = $saves;
-
         return $this;
     }
 
@@ -63,7 +66,6 @@ class Score
     public function setPuntos(int $puntos): static
     {
         $this->puntos = $puntos;
-
         return $this;
     }
 
@@ -75,7 +77,20 @@ class Score
     public function setFechaGuardado(\DateTimeInterface $fecha_guardado): static
     {
         $this->fecha_guardado = $fecha_guardado;
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }
+
+    
 }

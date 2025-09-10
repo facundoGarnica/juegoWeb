@@ -1,0 +1,883 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* Reset y variables */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #00ff88;
+    --secondary-color: #ff0080;
+    --accent-color: #00d4ff;
+    --dark-bg: #0a0a0f;
+    --darker-bg: #050507;
+    --text-light: #ffffff;
+    --text-glow: #00ff88;
+    --neon-purple: #b347d9;
+    --neon-blue: #47d9ff;
+    --gradient-main: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-gaming: linear-gradient(45deg, #ff0080, #00ff88, #00d4ff, #ff0080);
+}
+
+/* Body y fondo */
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Efecto de fondo animado */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+    animation: backgroundPulse 8s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes backgroundPulse {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.7; }
+}
+
+/* Título principal */
+#titulo {
+    font-family: 'Orbitron', monospace;
+    font-size: 4rem;
+    font-weight: 900;
+    text-align: center;
+    margin: 2rem 0;
+    background: var(--gradient-gaming);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease infinite, glow 2s ease-in-out infinite alternate;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    letter-spacing: 3px;
+    position: relative;
+}
+
+#titulo::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(ellipse, rgba(0, 255, 136, 0.2) 0%, transparent 70%);
+    z-index: -1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(255, 0, 128, 0.3); }
+    to { text-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 60px rgba(255, 0, 128, 0.5); }
+}
+
+/* Descripción */
+#descripcion {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 400;
+    padding: 0 2rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+}
+
+/* Área de bienvenida */
+#BienvenidoUser {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+    margin: 2rem auto;
+    position: relative;
+    overflow: hidden;
+}
+
+#BienvenidoUser::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-gaming);
+    background-size: 400% 400%;
+    border-radius: 15px;
+    z-index: -1;
+    animation: gradientShift 3s linear infinite;
+    opacity: 0.3;
+}
+
+#BienvenidoUser p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+#BienvenidoUser a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+#BienvenidoUser a:hover {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px currentColor;
+}
+
+/* Contenedor de menú */
+#contenedor_menu {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+}
+
+/* Botones del menú */
+button, #BienvenidoUser a, .modal a {
+    padding: 12px 30px;
+    background: linear-gradient(45deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+    border: 2px solid var(--primary-color);
+    color: var(--text-light);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    box-shadow: 
+        0 0 20px rgba(0, 255, 136, 0.5),
+        0 0 40px rgba(0, 255, 136, 0.3),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    border-color: var(--accent-color);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Top mejores puntajes */
+#topMejores {
+    max-width: 600px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    backdrop-filter: blur(15px);
+    position: relative;
+}
+
+#topMejores::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--neon-purple));
+    background-size: 400% 400%;
+    border-radius: 20px;
+    z-index: -1;
+    animation: gradientShift 4s ease infinite;
+    opacity: 0.3;
+}
+
+#topMejores h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}
+
+#topMejores ol {
+    list-style: none;
+    counter-reset: ranking;
+}
+
+#topMejores li {
+    counter-increment: ranking;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    border-left: 4px solid var(--accent-color);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#topMejores li:first-child::before {
+    content: "🥇 " counter(ranking);
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
+    color: var(--dark-bg);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#topMejores li:nth-child(2)::before {
+    content: "🥈 " counter(ranking);
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #C0C0C0;
+    color: var(--dark-bg);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#topMejores li:nth-child(3)::before {
+    content: "🥉 " counter(ranking);
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #CD7F32;
+    color: var(--text-light);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#topMejores li:nth-child(n+4)::before {
+    content: counter(ranking);
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--secondary-color);
+    color: var(--text-light);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+#topMejores li:hover {
+    transform: translateX(10px);
+    background: rgba(0, 255, 136, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+}
+/* Etiquetas fuertes dentro de la lista */
+#topMejores li .label {
+    font-weight: bold;
+    color: var(--primary-color); /* o cualquier color que quieras que resalte */
+}
+
+/* Valores más neutros */
+#topMejores li {
+    color: #ddd; /* el valor real es más suave */
+}
+
+/* Modales */
+
+.modal {
+    position: fixed;
+    top: 60px; /* antes era 0, ahora baja el modal */
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px); /* ajusta la altura para compensar el desplazamiento */
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start; /* alinea el contenido al inicio (arriba) */
+    justify-content: center;
+    min-height: calc(100vh - 60px);
+    min-width: 100vw;
+}
+
+.modal-content {
+    background: var(--darker-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 450px;
+    /* Altura automática pero con límites */
+    max-height: 90vh;
+    /* Permitir scroll si el contenido es muy alto */
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 255, 136, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    /* Posición relativa para el botón de cerrar */
+    position: relative;
+    /* Centrado adicional por si acaso */
+    margin: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.7) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-content h2 {
+    font-family: 'Orbitron', monospace;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* Botón de cerrar mejorado */
+.modal span {
+    color: var(--secondary-color) !important;
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    transition: color 0.3s ease !important;
+    /* Posición absoluta en la esquina superior derecha */
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    /* Asegurar que esté encima de todo */
+    z-index: 1001 !important;
+}
+
+.modal span:hover {
+    color: var(--primary-color) !important;
+    transform: scale(1.1);
+}
+
+/* Estilos para formularios dentro de modales */
+.modal-content form {
+    margin-top: 1rem;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"],
+.modal-content input[type="email"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 0.5rem 0;
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-light);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="password"]:focus,
+.modal-content input[type="email"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.modal-content label {
+    color: var(--accent-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.modal-content button[type="submit"] {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 15px;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    border: none;
+    border-radius: 25px;
+    color: var(--darker-bg);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-content button[type="submit"]:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+    transform: translateY(-2px);
+}
+
+.modal-content .form-error {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Estilo para checkboxes en el modal */
+.modal-content input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    accent-color: var(--primary-color);
+}
+
+.modal-content .form-check {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.modal-content .form-check label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Botón secundario para mostrar/ocultar contraseña */
+.modal-content .btn-secondary {
+    background: rgba(0, 212, 255, 0.2);
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    width: auto;
+    margin-top: 0.5rem;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.modal-content .btn-secondary:hover {
+    background: var(--accent-color);
+    color: var(--darker-bg);
+}
+
+/* Responsive para modales */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+        max-height: 85vh;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .modal span {
+        font-size: 1.8rem !important;
+        top: 10px !important;
+        right: 15px !important;
+    }
+}
+
+/* Asegurar que el body no tenga scroll cuando el modal esté abierto */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* === Modal de Error === */
+#modalError {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 5, 7, 0.85);
+    backdrop-filter: blur(8px);
+    display: none; /* Por defecto oculto */
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+#modalError .modal-box {
+    background: var(--darker-bg);
+    border: 2px solid var(--secondary-color);
+    border-radius: 18px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 
+        0 0 20px rgba(255, 0, 128, 0.4),
+        0 0 40px rgba(0, 255, 136, 0.2);
+    animation: popIn 0.4s ease;
+    position: relative;
+}
+
+#modalError p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px var(--secondary-color);
+}
+
+#modalError button {
+    background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    color: var(--darker-bg);
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#modalError button:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+    box-shadow: 0 0 15px rgba(255, 0, 128, 0.6);
+    transform: scale(1.05);
+}
+
+/* === Animaciones === */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.7) translateY(-30px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+
+/* final Modal de Error */
+
+
+/* Estilos del Carrusel de Juegos */
+#CarruselJuegos {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel {
+    position: relative;
+    height: 250px;
+}
+
+.carousel-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+    transition: all 0.6s ease;
+    cursor: pointer;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.carousel-item.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    z-index: 3;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+.carousel-item.prev {
+    transform: translate(-150%, -50%) scale(0.8);
+    opacity: 0.7;
+    z-index: 2;
+}
+
+.carousel-item.next {
+    transform: translate(50%, -50%) scale(0.8);
+    opacity: 0.7;
+    z-index: 2;
+}
+
+.carousel-item img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.carousel-item.active img {
+    width: 220px;
+    height: 220px;
+}
+
+/* Botones de control */
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, rgba(0, 255, 136, 0.8), rgba(0, 212, 255, 0.8));
+    border: 2px solid var(--primary-color);
+    color: var(--darker-bg);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    font-family: 'Orbitron', monospace;
+}
+
+.carousel-control.prev { left: 10px; }
+.carousel-control.next { right: 10px; }
+
+/* Indicadores */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+/* Overlay "JUGAR" en el centro de cada imagen */
+/* Mejoras para el overlay JUGAR */
+.carousel-item .play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #00ff88;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none; /* ✅ Deshabilitado por defecto */
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* ✅ Solo habilitar cuando está activo, centrado y se hace hover */
+.carousel-item.active.centered:hover .play-overlay {
+    opacity: 1;
+    pointer-events: auto; /* ✅ Habilitado solo aquí */
+    transform: translate(-50%, -50%) scale(1.05);
+    background: rgba(0, 0, 0, 0.8);
+    border-color: var(--primary-color);
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00d4ff;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+
+/* Responsive carrusel */
+@media (max-width: 768px) {
+    .carousel { height: 200px; }
+    .carousel-item img { width: 150px; height: 150px; }
+    .carousel-item.active img { width: 170px; height: 170px; }
+    .carousel-control { width: 40px; height: 40px; font-size: 1.2rem; }
+}
+
+/* Footer */
+#footer {
+    margin-top: 5rem;
+    padding: 3rem 2rem 2rem;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(10, 10, 15, 0.9));
+    border-top: 2px solid var(--primary-color);
+    text-align: center;
+    position: relative;
+}
+
+#footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-gaming);
+    background-size: 400% 400%;
+    animation: gradientShift 3s linear infinite;
+}
+
+#footer p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+#footer ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+#footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+#footer a:hover {
+    color: var(--primary-color);
+    background: rgba(0, 255, 136, 0.1);
+    text-shadow: 0 0 10px currentColor;
+}
+
+/* Animaciones adicionales */
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #titulo {
+        font-size: 3rem;
+        margin: 1rem 0;
+    }
+    
+    #descripcion {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+    }
+    
+    #contenedor_menu {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    button {
+        width: 80%;
+        max-width: 250px;
+    }
+    
+    #topMejores {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+    }
+    
+    #topMejores li::before {
+        left: -35px;
+        width: 25px;
+        height: 25px;
+        font-size: 0.8rem;
+    }
+    
+    #footer ul {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

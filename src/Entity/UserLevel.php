@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\UserLevelRepository;
@@ -14,7 +13,7 @@ class UserLevel
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'userLevels')]
-    private ?user $user = null;
+    private ?User $user = null; // ✅ Cambiado a 'User' con mayúscula
 
     #[ORM\ManyToOne(inversedBy: 'userLevels')]
     private ?Level $level = null;
@@ -28,20 +27,22 @@ class UserLevel
     #[ORM\Column]
     private ?int $puntosObtenidos = null;
 
+    #[ORM\ManyToOne(inversedBy: 'userLevels')]
+    private ?Game $game = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User // ✅ Cambiado a 'User' con mayúscula
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static // ✅ Cambiado a 'User' con mayúscula
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -53,7 +54,6 @@ class UserLevel
     public function setLevel(?Level $level): static
     {
         $this->level = $level;
-
         return $this;
     }
 
@@ -65,7 +65,6 @@ class UserLevel
     public function setCompletado(bool $completado): static
     {
         $this->completado = $completado;
-
         return $this;
     }
 
@@ -77,7 +76,6 @@ class UserLevel
     public function setTiempoUsado(int $tiempo_usado): static
     {
         $this->tiempo_usado = $tiempo_usado;
-
         return $this;
     }
 
@@ -89,6 +87,17 @@ class UserLevel
     public function setPuntosObtenidos(int $puntosObtenidos): static
     {
         $this->puntosObtenidos = $puntosObtenidos;
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

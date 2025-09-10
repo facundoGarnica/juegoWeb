@@ -1,0 +1,37 @@
+{{ form_errors(registrationForm) }}
+{{ form_start(registrationForm, {'action': path('app_register'), 'attr': {'id': 'registrationFormModal'}}) }}
+    {{ form_row(registrationForm.username) }}
+    {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
+    <button type="button" id="togglePasswordModal" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
+    {{ form_row(registrationForm.agreeTerms) }}
+    
+    <button type="submit" class="btn btn-primary mt-2">Register</button>
+{{ form_end(registrationForm) }}
+
+
+
+<script>
+// Script para mostrar/ocultar contraseña en el modal
+document.getElementById('togglePasswordModal').addEventListener('click', function () {
+    const passwordButton = document.getElementById('togglePasswordModal');
+    if (passwordButton.textContent === 'Mostrar Contraseña') {
+        passwordButton.textContent = 'Ocultar Contraseña';
+    } else {
+        passwordButton.textContent = 'Mostrar Contraseña';
+    }
+    
+    // Buscar los campos de contraseña dentro del modal
+    const modalForm = document.getElementById('registrationFormModal');
+    const passwordInputs = modalForm.querySelectorAll('input[type="password"], input[type="text"]');
+    
+    passwordInputs.forEach(input => {
+        if (input.name && input.name.includes('plainPassword')) {
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+    });
+});
+</script>

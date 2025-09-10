@@ -16,6 +16,7 @@ class SavesType extends AbstractType
             ->add('pos_y')
             ->add('vidasRestantes')
             ->add('fecha_guardado')
+            ->add('game')
         ;
     }
 

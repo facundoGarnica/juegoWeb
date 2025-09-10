@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\UserItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
+use App\Entity\Item;
 
 #[ORM\Entity(repositoryClass: UserItemRepository::class)]
 class UserItem
@@ -13,10 +15,10 @@ class UserItem
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userItems')]
-    private ?user $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userItems')]
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userItems')]
+    #[ORM\ManyToOne(targetEntity: Item::class, inversedBy: 'userItems')]
     private ?Item $item = null;
 
     #[ORM\Column]
@@ -27,15 +29,14 @@ class UserItem
         return $this->id;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -47,7 +48,6 @@ class UserItem
     public function setItem(?Item $item): static
     {
         $this->item = $item;
-
         return $this;
     }
 
@@ -59,7 +59,6 @@ class UserItem
     public function setCantidad(float $cantidad): static
     {
         $this->cantidad = $cantidad;
-
         return $this;
     }
 }

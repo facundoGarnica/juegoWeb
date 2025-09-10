@@ -11,44 +11,45 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('username')
-            ->add('agreeTerms', CheckboxType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Ingresar usuario.',
-                    ]),
-                ],
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
-            ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
+            $builder
+        ->add('username')
+        ->add('agreeTerms', CheckboxType::class, [
+            'mapped' => false,
+            'constraints' => [
+                new IsTrue([
+                    'message' => 'Debes aceptar los términos.',
+                ]),
+            ],
+        ])
+        ->add('plainPassword', RepeatedType::class, [
+            'type' => PasswordType::class,
+            'mapped' => false,
+            'first_options' => [
+                'label' => 'Contraseña',
                 'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
-            ])
-        ;
+            ],
+            'second_options' => [
+                'label' => 'Repetir Contraseña',
+                'attr' => ['autocomplete' => 'new-password'],
+            ],
+            'invalid_message' => 'Las contraseñas deben coincidir',
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Ingresa una contraseña',
+                ]),
+                new Length([
+                    'min' => 4,
+                    'minMessage' => 'La contraseña debe tener al menos {{ limit }} caracteres',
+                    'max' => 4096,
+                ]),
+            ],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
