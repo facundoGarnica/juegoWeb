@@ -142,9 +142,13 @@ class GameController extends AbstractController
         return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    //  Ver top scores por juego
+    // Ver top scores por juego usando Player
     #[Route('/{id}/top-scores', name: 'app_game_top_scores', methods: ['GET'])]
-    public function topScoresByGame(int $id, GameRepository $gameRepository, UserLevelRepository $userLevelRepository): JsonResponse
+    public function topScoresByGame(
+        int $id,
+        GameRepository $gameRepository,
+        UserLevelRepository $userLevelRepository
+    ): JsonResponse
     {
         $game = $gameRepository->find($id);
         if (!$game) {
@@ -155,9 +159,11 @@ class GameController extends AbstractController
 
         $data = [];
         foreach ($topScores as $ul) {
+            $player = $ul->getPlayer(); // <-- Ahora usamos Player
             $data[] = [
-                'user' => $ul->getUser() ? $ul->getUser()->getUsername() : 'N/A',
-                'nivel' => $ul->getLevel() ? $ul->getLevel()->getNombre() : 'N/A',
+                'player' => $player ? $player->getNombre() : 'N/A', // Nombre del jugador
+                'user'   => $player && $player->getUser() ? $player->getUser()->getUsername() : 'N/A', // Opcional
+                'nivel'  => $ul->getLevel() ? $ul->getLevel()->getNombre() : 'N/A',
                 'puntos' => $ul->getPuntosObtenidos(),
             ];
         }

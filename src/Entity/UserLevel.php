@@ -12,8 +12,8 @@ class UserLevel
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userLevels')]
-    private ?User $user = null; // ✅ Cambiado a 'User' con mayúscula
+    #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'userLevels')]
+    private ?Player $player = null;
 
     #[ORM\ManyToOne(inversedBy: 'userLevels')]
     private ?Level $level = null;
@@ -35,14 +35,14 @@ class UserLevel
         return $this->id;
     }
 
-    public function getUser(): ?User // ✅ Cambiado a 'User' con mayúscula
+    public function getPlayer(): ?Player
     {
-        return $this->user;
+        return $this->player;
     }
 
-    public function setUser(?User $user): static // ✅ Cambiado a 'User' con mayúscula
+    public function setPlayer(?Player $player): static
     {
-        $this->user = $user;
+        $this->player = $player;
         return $this;
     }
 
@@ -98,7 +98,6 @@ class UserLevel
     public function setGame(?Game $game): static
     {
         $this->game = $game;
-
         return $this;
     }
 }

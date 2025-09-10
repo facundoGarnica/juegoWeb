@@ -9,6 +9,8 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Player</th>
+                <th>Item</th>
                 <th>Cantidad</th>
                 <th>actions</th>
             </tr>
@@ -17,6 +19,8 @@
         {% for user_item in user_items %}
             <tr>
                 <td>{{ user_item.id }}</td>
+                <td>{{ user_item.player }}</td>
+                <td>{{ user_item.item }}</td>
                 <td>{{ user_item.cantidad }}</td>
                 <td>
                     <a href="{{ path('app_user_item_show', {'id': user_item.id}) }}">show</a>
@@ -32,4 +36,5 @@
     </table>
 
     <a href="{{ path('app_user_item_new') }}">Create new</a>
+    <a href="{{ path('app_formularios') }}">Volver al inicio</a>
 {% endblock %}

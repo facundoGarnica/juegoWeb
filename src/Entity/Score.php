@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Repository\ScoreRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\User;
+use App\Entity\Player;
 use App\Entity\Saves;
 
 #[ORM\Entity(repositoryClass: ScoreRepository::class)]
@@ -16,8 +16,8 @@ class Score
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'scores')]
-    private ?User $user = null;
+    #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'scores')]
+    private ?Player $player = null;
 
     #[ORM\ManyToOne(targetEntity: Saves::class, inversedBy: 'scores')]
     private ?Saves $saves = null;
@@ -36,14 +36,14 @@ class Score
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getPlayer(): ?Player
     {
-        return $this->user;
+        return $this->player;
     }
 
-    public function setUser(?User $user): static
+    public function setPlayer(?Player $player): static
     {
-        $this->user = $user;
+        $this->player = $player;
         return $this;
     }
 
@@ -88,9 +88,6 @@ class Score
     public function setGame(?Game $game): static
     {
         $this->game = $game;
-
         return $this;
     }
-
-    
 }

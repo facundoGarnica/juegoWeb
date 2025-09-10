@@ -15,7 +15,7 @@ class UserLevel1Type extends AbstractType
             ->add('completado')
             ->add('tiempo_usado')
             ->add('puntosObtenidos')
-            ->add('user')
+            ->add('player')
             ->add('level')
             ->add('game')
         ;

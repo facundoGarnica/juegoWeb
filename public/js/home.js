@@ -36,32 +36,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cerrar register
         closeRegister.onclick = () => modalRegister.style.display = 'none';
     }
-    
-    // Script para mostrar/ocultar contraseña en el modal de registro
-    const togglePasswordModal = document.getElementById('togglePasswordModal');
-    if (togglePasswordModal) {
-        togglePasswordModal.addEventListener('click', function () {
-            const passwordButton = document.getElementById('togglePasswordModal');
-            if (passwordButton.textContent === 'Mostrar Contraseña') {
+
+    // Script para mostrar/ocultar contraseña en el modal de login
+    const togglePasswordLogin = document.getElementById('togglePasswordLogin');
+    if (togglePasswordLogin) {
+        togglePasswordLogin.addEventListener('click', function () {
+            const passwordInput = document.getElementById('inputPassword');
+            const passwordButton = document.getElementById('togglePasswordLogin');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
                 passwordButton.textContent = 'Ocultar Contraseña';
             } else {
+                passwordInput.type = 'password';
                 passwordButton.textContent = 'Mostrar Contraseña';
-            }
-           
-            // Buscar los campos de contraseña dentro del modal
-            const modalForm = document.getElementById('registrationFormModal');
-            if (modalForm) {
-                const passwordInputs = modalForm.querySelectorAll('input[type="password"], input[type="text"]');
-               
-                passwordInputs.forEach(input => {
-                    if (input.name && input.name.includes('plainPassword')) {
-                        if (input.type === 'password') {
-                            input.type = 'text';
-                        } else {
-                            input.type = 'password';
-                        }
-                    }
-                });
             }
         });
     }
@@ -299,27 +287,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateTopScores(gameId) {
-        fetch(`game/${gameId}/top-scores`)
-            .then(response => response.json())
-            .then(data => {
-                window.topScores = data;
-                const container = document.getElementById('topScoresContainer');
-                if (container) {
-                    let html = '<ol>';
-                    data.forEach(ul => {
-                        html += `<li>
-                            <span class='label'>Nombre:</span> <strong>${ul.user}</strong> - 
-                            <span class='label'>Puntaje:</span> <strong>${ul.puntos}</strong> - 
-                            <span class='label'>Nivel:</span> <strong>${ul.nivel}</strong>
-                        </li>`;
-                    });
-                    html += '</ol>';
-                    container.innerHTML = html;
-                }
-            })
-            .catch(err => console.error('Error cargando top scores:', err));
-    }
+   function updateTopScores(gameId) {
+    fetch(`game/${gameId}/top-scores`)
+        .then(response => response.json())
+        .then(data => {
+            window.topScores = data;
+            const container = document.getElementById('topScoresContainer');
+            if (container) {
+                let html = '<ol>';
+                data.forEach(ul => {
+                    html += `<li>
+                        <div><span class='label'>Usuario:</span> <strong>${ul.user}</strong></div>
+                        <div><span class='label'>Personaje:</span> <strong>${ul.player}</strong></div>
+                        <div><span class='label'>Puntaje:</span> <strong>${ul.puntos}</strong></div>
+                        <div><span class='label'>Nivel:</span> <strong>${ul.nivel}</strong></div>
+                    </li>`;
+                });
+                html += '</ol>';
+                container.innerHTML = html;
+            }
+        })
+        .catch(err => console.error('Error cargando top scores:', err));
+}
+
 });
 
 function abrirJuego(gameId) {

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Player{% endblock %}
+
+{% block body %}
+    <h1>Player</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ player.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ player.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Nivel</th>
+                <td>{{ player.nivel }}</td>
+            </tr>
+            <tr>
+                <th>Experiencia</th>
+                <td>{{ player.experiencia }}</td>
+            </tr>
+            <tr>
+                <th>Vida_actual</th>
+                <td>{{ player.vidaActual }}</td>
+            </tr>
+            <tr>
+                <th>Vida_maxima</th>
+                <td>{{ player.vidaMaxima }}</td>
+            </tr>
+            <tr>
+                <th>Fecha_creacion</th>
+                <td>{{ player.fechaCreacion ? player.fechaCreacion|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Ultima_conexion</th>
+                <td>{{ player.ultimaConexion ? player.ultimaConexion|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_player_index') }}">back to list</a>
+
+    <a href="{{ path('app_player_edit', {'id': player.id}) }}">edit</a>
+
+    {{ include('player/_delete_form.html.twig') }}
+{% endblock %}

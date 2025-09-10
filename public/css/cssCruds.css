@@ -1,0 +1,268 @@
+/* assets/css/tables.css */
+
+/* Tabla general */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* Encabezado */
+table thead tr {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table thead th {
+    padding: 10px;
+}
+
+/* Filas */
+table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Celdas */
+table td {
+    padding: 8px;
+}
+
+/* Enlaces de acción */
+table td a {
+    text-decoration: none;
+    color: #4CAF50;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+table td a:hover {
+    color: #388E3C;
+}
+
+/* Botones generales */
+button, .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #388E3C;
+}
+
+/* Enlaces tipo botón */
+a.btn {
+    display: inline-block;
+    margin: 10px 5px 0 0;
+}
+
+/* Formularios */
+form {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: Arial, sans-serif;
+}
+
+form label {
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="number"],
+form input[type="datetime-local"],
+form select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form input[type="submit"] {
+    width: fit-content;
+    padding: 8px 16px;
+}
+
+
+/*Css de formularios generales */
+
+/* assets/css/forms.css */
+
+/* Contenedor general del formulario */
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Labels */
+form label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* Mejorar apariencia de datetime, date y time */
+form input[type="datetime-local"],
+form input[type="date"],
+form input[type="time"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus para resaltar */
+form input[type="datetime-local"]:focus,
+form input[type="date"]:focus,
+form input[type="time"]:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+    outline: none;
+}
+
+/* Icono interno (para navegadores que soporten) */
+form input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+form input[type="date"]::-webkit-calendar-picker-indicator,
+form input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.3); /* opcional: icono más visible */
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+    outline: none;
+}
+
+/* Textarea */
+form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Checkboxes y radio */
+form input[type="checkbox"],
+form input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* Botones */
+form button,
+form input[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover,
+form input[type="submit"]:hover {
+    background-color: #388E3C;
+}
+
+/* Campos con errores (Symfony) */
+form .form-error-message {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+/* Mensajes de ayuda (Symfony) */
+form .form-help {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Agrupar checkboxes/radios horizontalmente */
+form .form-group-checkbox,
+form .form-group-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* assets/css/links.css */
+
+/* Estilo tipo botón para todos los enlaces */
+a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4CAF50; /* color principal */
+    color: #fff !important;     /* texto blanco */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Hover: cambio de color y efecto de elevación */
+a:hover {
+    background-color: #388E3C; /* verde más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    text-decoration: none;
+}
+
+/* Links pequeños tipo acción secundaria */
+a.btn-small {
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Links grandes tipo principal */
+a.btn-large {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    form {
+        padding: 15px;
+    }
+    form button,
+    form input[type="submit"] {
+        width: 100%;
+    }
+}

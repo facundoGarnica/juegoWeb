@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/level')]
 class LevelController extends AbstractController
 {
+    // Mostrar todos los niveles
     #[Route('/', name: 'app_level_index', methods: ['GET'])]
     public function index(LevelRepository $levelRepository): Response
     {
@@ -22,6 +23,7 @@ class LevelController extends AbstractController
         ]);
     }
 
+    // Crear un nuevo nivel
     #[Route('/new', name: 'app_level_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -42,7 +44,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_level_show', methods: ['GET'])]
+    // Mostrar un nivel específico
+    #[Route('/{id}', name: 'app_level_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Level $level): Response
     {
         return $this->render('level/show.html.twig', [
@@ -50,7 +53,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_level_edit', methods: ['GET', 'POST'])]
+    // Editar un nivel
+    #[Route('/{id}/edit', name: 'app_level_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Level $level, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(LevelType::class, $level);
@@ -68,7 +72,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_level_delete', methods: ['POST'])]
+    // Eliminar un nivel (POST)
+    #[Route('/{id}/delete', name: 'app_level_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Level $level, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$level->getId(), $request->request->get('_token'))) {

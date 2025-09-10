@@ -9,6 +9,9 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Player</th>
+                <th>saves</th>
+                <th>Game</th>
                 <th>Puntos</th>
                 <th>Fecha_guardado</th>
                 <th>actions</th>
@@ -18,6 +21,9 @@
         {% for score in scores %}
             <tr>
                 <td>{{ score.id }}</td>
+                <td>{{ score.player }}</td>
+                <td>{{ score.saves }}</td>
+                <td>{{ score.game }}</td>
                 <td>{{ score.puntos }}</td>
                 <td>{{ score.fechaGuardado ? score.fechaGuardado|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
@@ -34,4 +40,5 @@
     </table>
 
     <a href="{{ path('app_score_new') }}">Create new</a>
+    <a href="{{ path('app_formularios') }}">Volver al inicio</a>
 {% endblock %}

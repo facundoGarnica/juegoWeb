@@ -139,10 +139,6 @@ class Level
 
         return $this;
     }
-    public function __toString(): string
-    {
-        return (string) $this->nombre;
-    }
 
     public function getGame(): ?Game
     {
@@ -155,4 +151,13 @@ class Level
 
         return $this;
     }
+
+   public function __toString(): string
+    {
+        if ($this->game) {
+            return $this->game->getNombre() . ' - ' . $this->nombre;
+        }
+        return (string) $this->nombre;
+    }
+
 }

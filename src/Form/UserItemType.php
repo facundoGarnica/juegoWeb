@@ -13,7 +13,7 @@ class UserItemType extends AbstractType
     {
         $builder
             ->add('cantidad')
-            ->add('user')
+            ->add('player')
             ->add('item')
         ;
     }

@@ -14,7 +14,7 @@ class SpriteType extends AbstractType
         $builder
             ->add('imagenPath')
             ->add('action')
-            ->add('user')
+            ->add('player')
             ->add('enemies')
             ->add('game')
         ;

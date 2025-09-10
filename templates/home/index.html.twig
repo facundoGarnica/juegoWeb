@@ -40,7 +40,7 @@
         <a href="{{ path('app_logout') }}">Cerrar sesión</a>
     {% else %}
         <p>Bienvenido, invitado!</p>
-        <a href="#" id="openModal">Iniciar sesión</a> o
+        <a href="#" id="openModal">Iniciar sesión</a>
         <a href="#" id="openRegisterModal">Registrarse</a>
     {% endif %}
 </div>
@@ -87,11 +87,12 @@
         {{ form_errors(registrationForm) }}
         {{ form_start(registrationForm, {'action': path('app_register'), 'attr': {'id': 'registrationFormModal'}}) }}
             {{ form_row(registrationForm.username) }}
+            {{ form_row(registrationForm.email) }}
             {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
-            {{ form_row(registrationForm.agreeTerms) }}
-            <button type="submit" class="btn btn-primary mt-2">Register</button>
+            <button type="button" id="togglePasswordModal" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
+            <button type="submit" class="btn btn-primary mt-2">Registrar</button>
         {{ form_end(registrationForm) }}
-        <button type="button" id="togglePasswordModal" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
+
     </div>
 </div>
 
@@ -100,7 +101,27 @@
     <div class="modal-content">
         <span id="closeModal">&times;</span>
         <h2>Iniciar Sesión</h2>
-        {% include 'security/login.html.twig' %}
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login_check') }}">
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Correo electrónico</label>
+                <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label for="inputPassword" class="form-label">Contraseña</label>
+                <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            
+            <button type="button" id="togglePasswordLogin" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
+            <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
+        </form>
     </div>
 </div>
 

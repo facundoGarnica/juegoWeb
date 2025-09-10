@@ -9,8 +9,11 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Player</th>
+                <th>Enemies</th>
                 <th>ImagenPath</th>
                 <th>Action</th>
+                <th>Game</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -18,8 +21,11 @@
         {% for sprite in sprites %}
             <tr>
                 <td>{{ sprite.id }}</td>
+                <td>{{ sprite.player }}</td>
+                <td>{{ sprite.enemies }}</td>
                 <td>{{ sprite.imagenPath }}</td>
                 <td>{{ sprite.action }}</td>
+                <td>{{ sprite.game }}</td>
                 <td>
                     <a href="{{ path('app_sprite_show', {'id': sprite.id}) }}">show</a>
                     <a href="{{ path('app_sprite_edit', {'id': sprite.id}) }}">edit</a>
@@ -34,4 +40,6 @@
     </table>
 
     <a href="{{ path('app_sprite_new') }}">Create new</a>
+
+    <a href="{{ path('app_formularios') }}">Volver al inicio</a>
 {% endblock %}

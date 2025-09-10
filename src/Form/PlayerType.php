@@ -2,28 +2,32 @@
 
 namespace App\Form;
 
-use App\Entity\Score;
+use App\Entity\Player;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ScoreType extends AbstractType
+class PlayerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('puntos')
-            ->add('fecha_guardado')
-            ->add('player')
-            ->add('saves')
-            ->add('game')
+            ->add('nombre')
+            ->add('nivel')
+            ->add('experiencia')
+            ->add('vida_actual')
+            ->add('vida_maxima')
+            ->add('fecha_creacion')
+            ->add('ultima_conexion')
+            ->add('user')
+            ->add('games')
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Score::class,
+            'data_class' => Player::class,
         ]);
     }
 }

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Player index{% endblock %}
+
+{% block body %}
+    <h1>Player index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Nivel</th>
+                <th>Experiencia</th>
+                <th>Vida_actual</th>
+                <th>Vida_maxima</th>
+                <th>Fecha_creacion</th>
+                <th>Ultima_conexion</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for player in players %}
+            <tr>
+                <td>{{ player.id }}</td>
+                <td>{{ player.nombre }}</td>
+                <td>{{ player.nivel }}</td>
+                <td>{{ player.experiencia }}</td>
+                <td>{{ player.vidaActual }}</td>
+                <td>{{ player.vidaMaxima }}</td>
+                <td>{{ player.fechaCreacion ? player.fechaCreacion|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ player.ultimaConexion ? player.ultimaConexion|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_player_show', {'id': player.id}) }}">show</a>
+                    <a href="{{ path('app_player_edit', {'id': player.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_player_new') }}">Create new</a>
+    <a href="{{ path('app_formularios') }}">Volver al inicio</a>
+{% endblock %}

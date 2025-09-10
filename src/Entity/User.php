@@ -11,7 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['username'], message: 'Ya existe una cuenta con este nombre de usuario')]
+#[UniqueEntity(fields: ['email'], message: 'Ya existe una cuenta con este email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -21,6 +22,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     private ?string $username = null;
+
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
 
     #[ORM\Column(type: "string")]
     private ?string $password = null;
@@ -40,12 +44,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'user_id')]
     private Collection $sprites;
 
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'user')]
+    private Collection $players;
+
     public function __construct()
     {
         $this->userItems = new ArrayCollection();
         $this->userLevels = new ArrayCollection();
         $this->scores = new ArrayCollection();
         $this->sprites = new ArrayCollection();
+        $this->players = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,7 +61,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    // 🔹 Interfaz PasswordAuthenticatedUserInterface
+    // 🔹 Email
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    // 🔹 PasswordAuthenticatedUserInterface
     public function getPassword(): ?string
     {
         return $this->password;
@@ -65,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // 🔹 Interfaz UserInterface
+    // 🔹 UserInterface
     public function getUsername(): ?string
     {
         return $this->username;
@@ -79,7 +99,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        // 👇 Podés cambiar esto a $this->email si querés que el login sea por email
+        return (string) $this->email;
     }
 
     public function getRoles(): array
@@ -100,25 +121,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // Limpiar datos sensibles si existieran
     }
 
-    // 🔹 Relaciones omitidas para acortar el ejemplo
+    // 🔹 Relaciones omitidas para acortar
     public function getUserItems(): Collection { return $this->userItems; }
-    public function addUserItem(UserItem $userItem): static { /* ... */ return $this; }
-    public function removeUserItem(UserItem $userItem): static { /* ... */ return $this; }
-
     public function getUserLevels(): Collection { return $this->userLevels; }
-    public function addUserLevel(UserLevel $userLevel): static { /* ... */ return $this; }
-    public function removeUserLevel(UserLevel $userLevel): static { /* ... */ return $this; }
-
     public function getScores(): Collection { return $this->scores; }
-    public function addScore(Score $score): static { /* ... */ return $this; }
-    public function removeScore(Score $score): static { /* ... */ return $this; }
-
     public function getSprites(): Collection { return $this->sprites; }
-    public function addSprite(Sprite $sprite): static { /* ... */ return $this; }
-    public function removeSprite(Sprite $sprite): static { /* ... */ return $this; }
 
     public function __toString(): string
     {
         return (string) $this->username;
+    }
+
+    /**
+     * @return Collection<int, Player>
+     */
+    public function getPlayers(): Collection
+    {
+        return $this->players;
+    }
+
+    public function addPlayer(Player $player): static
+    {
+        if (!$this->players->contains($player)) {
+            $this->players->add($player);
+            $player->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlayer(Player $player): static
+    {
+        if ($this->players->removeElement($player)) {
+            // set the owning side to null (unless already changed)
+            if ($player->getUser() === $this) {
+                $player->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

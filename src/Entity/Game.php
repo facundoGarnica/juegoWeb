@@ -52,6 +52,9 @@ class Game
     #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'game')]
     private Collection $sprites;
 
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'games')]
+    private Collection $players;
+
     public function __construct()
     {
         $this->scores = new ArrayCollection();
@@ -60,6 +63,7 @@ class Game
         $this->userLevels = new ArrayCollection();
         $this->enemies = new ArrayCollection();
         $this->sprites = new ArrayCollection();
+        $this->players = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -322,5 +326,35 @@ class Game
     public function __toString(): string
     {
         return $this->nombre;
+    }
+
+    /**
+     * @return Collection<int, Player>
+     */
+    public function getPlayers(): Collection
+    {
+        return $this->players;
+    }
+
+    public function addPlayer(Player $player): static
+    {
+        if (!$this->players->contains($player)) {
+            $this->players->add($player);
+            $player->setGames($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlayer(Player $player): static
+    {
+        if ($this->players->removeElement($player)) {
+            // set the owning side to null (unless already changed)
+            if ($player->getGames() === $this) {
+                $player->setGames(null);
+            }
+        }
+
+        return $this;
     }
 }

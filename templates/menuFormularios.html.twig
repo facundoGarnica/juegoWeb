@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}CRUD Dashboard{% endblock %}
-
 {% block body %}
 
 <style>
@@ -71,19 +70,21 @@
     <div class="crud-section">
         <h3>Personajes CRUD</h3>
         <div class="crud-buttons">
-            <a href="{{ path('app_enemies_index') }}"><button>Index Enemigos</button></a>
-            <a href="{{ path('app_user_item_index') }}"><button>Index Usuario Item</button></a>
-            <a href="{{ path('app_user_level_index') }}"><button>Index Usuario Level</button></a>
+            <a href="{{ path('app_player_index') }}"><button>Player</button></a>
+            <a href="{{ path('app_enemies_index') }}"><button>enemies</button></a>
+            <a href="{{ path('app_level_enemies_index') }}"><button>Level Enemies</button></a>
+            <a href="{{ path('app_user_item_index') }}"><button>Index Player Item</button></a>
+            <a href="{{ path('app_user_level_index') }}"><button>Index Player Level</button></a>
         </div>
     </div>
 
     <div class="crud-section">
         <h3>Items y Niveles</h3>
         <div class="crud-buttons">
-            <a href="{{ path('app_game_index') }}"><button>Index Game</button></a>
-            <a href="{{ path('app_item_index') }}"><button>Index Items</button></a>
-            <a href="{{ path('app_level_index') }}"><button>Index Niveles</button></a>
-            <a href="{{ path('app_saves_index') }}"><button>Index Saves</button></a>
+            <a href="{{ path('app_game_index') }}"><button>Game</button></a>
+            <a href="{{ path('app_item_index') }}"><button>Items</button></a>
+            <a href="{{ path('app_level_index') }}"><button>Level</button></a>
+            <a href="{{ path('app_saves_index') }}"><button>Saves</button></a>
         </div>
     </div>
 
