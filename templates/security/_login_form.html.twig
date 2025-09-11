@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('app_login') }}">
+<form method="post" action="{{ path('app_login') }}" autocomplete="off">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -11,13 +11,58 @@
 
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
 
-    <label for="username">Username</label>
-    <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
+    <div class="mb-3">
+        <label for="username">Username</label>
+        <input 
+            type="text" 
+            value="{{ last_username }}" 
+            name="_username" 
+            id="username" 
+            class="form-control" 
+            autocomplete="off" 
+            required 
+            autofocus
+        >
+    </div>
 
-    <label for="password">Password</label>
-    <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+    <div class="mb-3">
+        <label for="password">Password</label>
+        <input 
+            type="password" 
+            name="_password" 
+            id="password" 
+            class="form-control" 
+            autocomplete="new-password" 
+            required
+        >
+    </div>
 
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
     <button class="btn btn-lg btn-primary mt-2" type="submit">Sign in</button>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    if (passwordInput && !document.getElementById('togglePassword')) {
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.id = 'togglePassword';
+        toggleButton.className = 'btn btn-secondary mt-2';
+        toggleButton.textContent = 'Mostrar Contraseña';
+        
+        toggleButton.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Ocultar Contraseña';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Mostrar Contraseña';
+            }
+        });
+        
+        passwordInput.parentNode.appendChild(toggleButton);
+    }
+});
+</script>

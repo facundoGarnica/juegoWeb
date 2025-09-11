@@ -7,7 +7,7 @@
 <a href="{{ path('app_formularios') }}">
     <button>Menu Formularios</button>
 </a>
-<h1 id="titulo">CodeJuegos = ["Facu", "Marian"]</h1>
+<h1 id="titulo">[#] CodeGames [#]</h1>
 
 
 <!-- Mensajes flash -->
@@ -30,7 +30,7 @@
 <p id="descripcion">
     Bienvenido a <strong>CodeJuegos</strong>, un playground de juegos.  
     Proyectos creados desde cero por Facu y Marian, combinando programación y análisis.  
-    ¡Explora, juega y danos un feedback!
+    Explora y danos un feedback
 </p>
 
 
@@ -78,24 +78,32 @@
     </div>
 </section>
 
-
-<!-- Modal de Registro -->
+<!-- Modal de Registro - CORREGIDO -->
 <div id="modalRegister" class="modal" style="display:none;">
     <div class="modal-content">
         <span id="closeRegisterModal">&times;</span>
         <h2>Registro</h2>
-        {{ form_errors(registrationForm) }}
-        {{ form_start(registrationForm, {'action': path('app_register'), 'attr': {'id': 'registrationFormModal'}}) }}
+        <!-- AGREGAR ACTION AL FORMULARIO -->
+        {{ form_start(registrationForm, {
+            'attr': {
+                'id': 'registrationFormModal',
+                'action': path('app_register')
+            }
+        }) }}
             {{ form_row(registrationForm.username) }}
+            <div class="error" id="error-username"></div>
+            
             {{ form_row(registrationForm.email) }}
+            <div class="error" id="error-email"></div>
+            
             {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
+            <div class="error" id="error-plainPassword"></div>
+            
             <button type="button" id="togglePasswordModal" class="btn btn-secondary mt-2">Mostrar Contraseña</button>
             <button type="submit" class="btn btn-primary mt-2">Registrar</button>
         {{ form_end(registrationForm) }}
-
     </div>
 </div>
-
 <!-- Modal de Login -->
 <div id="modalLogin" class="modal" style="display:none;">
     <div class="modal-content">
