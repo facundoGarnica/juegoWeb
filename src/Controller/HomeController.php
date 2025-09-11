@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\UserLevelRepository;
 use App\Repository\GameRepository;
+use Twig\Environment;
 
 class HomeController extends AbstractController
 {
@@ -60,38 +61,42 @@ class HomeController extends AbstractController
         return $this->render('menuFormularios.html.twig');
     }
 
-    // Ruta para el juego específico
-   #[Route('/juego/{id}/{userId}', name: 'juego_pad')]
-    public function juegoPad(int $id, ?int $userId, GameRepository $gameRepository): Response
-    {
+    //ruta para el juego seleccionado
+    #[Route('/juego/{id}/{userId}', name: 'juego_pad')]
+    public function juegoPad(
+        int $id,
+        ?int $userId,
+        GameRepository $gameRepository,
+        Environment $twig
+    ): Response {
         $game = $gameRepository->find($id);
 
         if (!$game) {
-            // Juego no encontrado, devolver respuesta vacía
-            return new Response('', 204); // 204 = No Content
+            return new Response('', 204); // Juego no encontrado
         }
 
         $gameName = $game->getNombre();
 
-        // Si userId no se pasa, tomar del usuario logueado
+        // Si no se pasa userId, tomar del usuario logueado
         if (!$userId) {
             $user = $this->getUser();
             $userId = $user ? $user->getId() : null;
         }
 
-        // Verificar si el template existe
-        $templatePath = $this->getParameter('kernel.project_dir') . "/templates/juegos/$gameName.html.twig";
-        if (!file_exists($templatePath)) {
-            // No hacer nada, devolver respuesta vacía
-            return new Response('', 204);
+        // 🔹 Buscar template en /templates/{GameName}/index.html.twig
+        $templateName = $gameName . '/index.html.twig';
+
+        if (!$twig->getLoader()->exists($templateName)) {
+            return new Response('', 204); // No existe
         }
 
-        return $this->render("juegos/$gameName.html.twig", [
-            'id' => $id,
+        return $this->render($templateName, [
+            'id'     => $id,
             'userId' => $userId,
             'nombre' => $gameName,
         ]);
     }
+
 
 
 }

@@ -13,6 +13,7 @@
                 <th>Descripcion</th>
                 <th>Vida</th>
                 <th>Damage</th>
+                <th>Game </th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
                 <td>{{ enemy.descripcion }}</td>
                 <td>{{ enemy.vida }}</td>
                 <td>{{ enemy.damage }}</td>
+                <td>{{enemy.game}}</td>
                 <td>
                     <a href="{{ path('app_enemies_show', {'id': enemy.id}) }}">show</a>
                     <a href="{{ path('app_enemies_edit', {'id': enemy.id}) }}">edit</a>

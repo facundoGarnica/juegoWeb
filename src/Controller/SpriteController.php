@@ -10,10 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/sprite')]
 class SpriteController extends AbstractController
 {
+    private string $spriteDir = 'C:\xampp\htdocs\juegoweb\public\images\sprites';
+
     #[Route('/', name: 'app_sprite_index', methods: ['GET'])]
     public function index(SpriteRepository $spriteRepository): Response
     {
@@ -30,6 +33,21 @@ class SpriteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imagenPath')->getData();
+
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = uniqid().'-'.$originalFilename.'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move($this->spriteDir, $newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Error al subir la imagen.');
+                }
+
+                $sprite->setImagenPath($newFilename);
+            }
+
             $entityManager->persist($sprite);
             $entityManager->flush();
 
@@ -57,6 +75,31 @@ class SpriteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imagenPath')->getData();
+
+            if ($imageFile) {
+                // borrar imagen anterior si existe
+                $oldImage = $sprite->getImagenPath();
+                if ($oldImage) {
+                    $oldImagePath = $this->spriteDir . DIRECTORY_SEPARATOR . $oldImage;
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
+                // guardar nueva imagen
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = uniqid().'-'.$originalFilename.'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move($this->spriteDir, $newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Error al subir la nueva imagen.');
+                }
+
+                $sprite->setImagenPath($newFilename);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_sprite_index', [], Response::HTTP_SEE_OTHER);
@@ -72,6 +115,15 @@ class SpriteController extends AbstractController
     public function delete(Request $request, Sprite $sprite, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$sprite->getId(), $request->request->get('_token'))) {
+            // borrar imagen física
+            $imageName = $sprite->getImagenPath();
+            if ($imageName) {
+                $imagePath = $this->spriteDir . DIRECTORY_SEPARATOR . $imageName;
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
             $entityManager->remove($sprite);
             $entityManager->flush();
         }

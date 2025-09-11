@@ -6,6 +6,7 @@ use App\Repository\EnemiesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Sprite;
 
 #[ORM\Entity(repositoryClass: EnemiesRepository::class)]
 class Enemies
@@ -30,7 +31,8 @@ class Enemies
     #[ORM\OneToMany(targetEntity: LevelEnemies::class, mappedBy: 'enemies')]
     private Collection $levelEnemies;
 
-    #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'enemies_id')]
+    // 🔹 Cambiado mappedBy de 'enemies_id' a 'enemies'
+    #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'enemies')]
     private Collection $sprites;
 
     #[ORM\ManyToOne(inversedBy: 'enemies')]
@@ -55,7 +57,6 @@ class Enemies
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
@@ -67,7 +68,6 @@ class Enemies
     public function setDescripcion(?string $descripcion): static
     {
         $this->descripcion = $descripcion;
-
         return $this;
     }
 
@@ -79,7 +79,6 @@ class Enemies
     public function setVida(int $vida): static
     {
         $this->vida = $vida;
-
         return $this;
     }
 
@@ -91,7 +90,6 @@ class Enemies
     public function setDamage(int $damage): static
     {
         $this->damage = $damage;
-
         return $this;
     }
 
@@ -116,7 +114,6 @@ class Enemies
     public function removeLevelEnemy(LevelEnemies $levelEnemy): static
     {
         if ($this->levelEnemies->removeElement($levelEnemy)) {
-            // set the owning side to null (unless already changed)
             if ($levelEnemy->getEnemies() === $this) {
                 $levelEnemy->setEnemies(null);
             }
@@ -137,7 +134,8 @@ class Enemies
     {
         if (!$this->sprites->contains($sprite)) {
             $this->sprites->add($sprite);
-            $sprite->setEnemiesId($this);
+            // 🔹 Usar setEnemies, no setEnemiesId
+            $sprite->setEnemies($this);
         }
 
         return $this;
@@ -146,17 +144,12 @@ class Enemies
     public function removeSprite(Sprite $sprite): static
     {
         if ($this->sprites->removeElement($sprite)) {
-            // set the owning side to null (unless already changed)
-            if ($sprite->getEnemiesId() === $this) {
-                $sprite->setEnemiesId(null);
+            if ($sprite->getEnemies() === $this) {
+                $sprite->setEnemies(null);
             }
         }
 
         return $this;
-    }
-    public function __toString(): string
-    {
-        return (string) $this->nombre;
     }
 
     public function getGame(): ?Game
@@ -167,7 +160,11 @@ class Enemies
     public function setGame(?Game $game): static
     {
         $this->game = $game;
-
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->nombre;
     }
 }

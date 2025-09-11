@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ArrayRun{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/ArrayRun.css') }}">
+{% endblock %}
+{% block body %}
+<!-- Pasar variables globales !-->
+<script>
+    const gameId = {{ id }};
+    const userId = {{ userId|default('null') }};
+    const spritesBasePath = "{{ asset('images/sprites/') }}";
+    const enemiesJsonPath = "{{ path('game_enemies_json', {'id': id}) }}";
+</script>
+
+<script src="{{ asset('js/arrayrun.js') }}"></script>
+
+<h1>ArrayRun</h1>
+
+<div id="game-container">
+    <div id="ogro" class="enemy-slot"></div>
+    <div id="profesor" class="enemy-slot"></div>
+</div>
+
+
+<script src="{{ asset('js/ArrayRun_enemies.js') }}"></script>
+
+{% endblock %}
