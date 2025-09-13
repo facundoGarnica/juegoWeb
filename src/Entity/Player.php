@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\PlayerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 class Player
@@ -38,8 +40,24 @@ class Player
     #[ORM\ManyToOne(inversedBy: 'players')]
     private ?User $user = null;
 
+    
+
+    // 🔹 Corregido: usar la columna games_id de la DB
     #[ORM\ManyToOne(inversedBy: 'players')]
-    private ?Game $games = null;
+    #[ORM\JoinColumn(name: 'games_id', referencedColumnName: 'id')]
+    private ?Game $game = null;
+
+    #[ORM\OneToMany(mappedBy: 'player', targetEntity: Sprite::class, cascade: ['persist', 'remove'])]
+    private Collection $sprites;
+
+    #[ORM\OneToMany(mappedBy: 'player', targetEntity: UserLevel::class, cascade: ['persist', 'remove'])]
+    private Collection $userLevels;
+    
+    public function __construct()
+    {
+        $this->sprites = new ArrayCollection();
+        $this->userLevels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -54,7 +72,6 @@ class Player
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
@@ -66,7 +83,6 @@ class Player
     public function setNivel(int $nivel): static
     {
         $this->nivel = $nivel;
-
         return $this;
     }
 
@@ -78,7 +94,6 @@ class Player
     public function setExperiencia(float $experiencia): static
     {
         $this->experiencia = $experiencia;
-
         return $this;
     }
 
@@ -90,7 +105,6 @@ class Player
     public function setVidaActual(int $vida_actual): static
     {
         $this->vida_actual = $vida_actual;
-
         return $this;
     }
 
@@ -102,7 +116,6 @@ class Player
     public function setVidaMaxima(int $vida_maxima): static
     {
         $this->vida_maxima = $vida_maxima;
-
         return $this;
     }
 
@@ -114,7 +127,6 @@ class Player
     public function setFechaCreacion(\DateTimeInterface $fecha_creacion): static
     {
         $this->fecha_creacion = $fecha_creacion;
-
         return $this;
     }
 
@@ -126,7 +138,6 @@ class Player
     public function setUltimaConexion(\DateTimeInterface $ultima_conexion): static
     {
         $this->ultima_conexion = $ultima_conexion;
-
         return $this;
     }
 
@@ -138,24 +149,51 @@ class Player
     public function setUser(?User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sprite>
+     */
+    public function getSprites(): Collection
+    {
+        return $this->sprites;
+    }
+
+    public function addSprite(Sprite $sprite): static
+    {
+        if (!$this->sprites->contains($sprite)) {
+            $this->sprites->add($sprite);
+            $sprite->setPlayer($this);
+        }
 
         return $this;
     }
 
-    public function getGames(): ?Game
+    public function removeSprite(Sprite $sprite): static
     {
-        return $this->games;
-    }
-
-    public function setGames(?Game $games): static
-    {
-        $this->games = $games;
+        if ($this->sprites->removeElement($sprite)) {
+            if ($sprite->getPlayer() === $this) {
+                $sprite->setPlayer(null);
+            }
+        }
 
         return $this;
     }
 
     public function __toString(): string
     {
-        return $this->nombre;
+        return (string) $this->nombre;
     }
 }

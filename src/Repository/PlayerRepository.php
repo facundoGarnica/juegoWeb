@@ -20,6 +20,20 @@ class PlayerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Player::class);
     }
+    /**
+     * Trae todos los players de un Game con sus sprites
+     */
+   public function findPlayersWithSpritesByGame(int $gameId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.sprites', 's')->addSelect('s')
+            ->leftJoin('p.games', 'g') // plural para coincidir con la columna DB
+            ->andWhere('g.id = :gameId')
+            ->setParameter('gameId', $gameId)
+            ->getQuery()
+            ->getResult();
+    }
+
 
 //    /**
 //     * @return Player[] Returns an array of Player objects

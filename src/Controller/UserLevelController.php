@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/user/level')]
 class UserLevelController extends AbstractController
@@ -78,4 +79,38 @@ class UserLevelController extends AbstractController
 
         return $this->redirectToRoute('app_user_level_index', [], Response::HTTP_SEE_OTHER);
     }
+
+   #[Route('/player/{playerId}/level/{levelId}', name: 'app_user_level_by_player_and_level', methods: ['GET'])]
+public function getPlayerLevelByUserAndLevel(
+    int $playerId,
+    int $levelId,
+    UserLevelRepository $userLevelRepository
+): JsonResponse {
+    $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
+
+    if (!$userLevel) {
+        // ⚠️ Cambié el status de 404 a 200
+        return $this->json([
+            'success' => false,
+            'data' => null,
+            'message' => 'No se encontró progreso para este jugador en este nivel',
+        ], Response::HTTP_OK);
+    }
+
+    return $this->json([
+        'success' => true,
+        'data' => [
+            'id' => $userLevel->getId(),
+            'completado' => $userLevel->isCompletado(),
+            'tiempo_usado' => $userLevel->getTiempoUsado(),
+            'puntos_obtenidos' => $userLevel->getPuntosObtenidos(),
+            'playerId' => $userLevel->getPlayer()->getId(),
+            'playerNombre' => $userLevel->getPlayer()->getUser()->getUsername(),
+            'levelId' => $userLevel->getLevel()->getId(),
+            'levelNombre' => $userLevel->getLevel()->getNombre()
+        ]
+    ]);
+}
+
+
 }

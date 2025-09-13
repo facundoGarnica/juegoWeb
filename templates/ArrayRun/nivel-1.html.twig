@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %}ArrayRun{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/ArrayRun-lvl1.css') }}">
+{% endblock %}
+
+{% block body %}
+<div id="fondoJuego">
+    <!-- Objetos del entorno !-->
+    <div class="objeto-llave" id="llave" style="top:200px; left:800px";></div>
+    <div class="objeto-silla" id="silla" style="top:270px; left:780px;" > </div>
+   
+    <div class="objeto-mesa" id="mesa" style="top:400px; left:870px;"> </div>
+
+    <div class="objeto-pilaLibros" id="pilaLibros" style="top:350px; left:783px;"></div>
+    <div class="objeto-pilaLibros" id="pilaLibros" style="top:389px; left:783px;"></div>
+
+    <!-- Jugador y enemigo!-->
+  <div class="objeto-jugador" id="jugador" style="top:300px; left:1700px;"
+        data-velocidad="3"
+        data-fuerza-salto="16"
+        data-gravedad-salto="0">
+        <img id="imgPlayer">
+    </div>
+
+
+    <div class ="objeto-enemigo"id="enemigo" style="top:380px; left:100px;" data-velocidad="3">
+        <p><strong>Enemigo</strong></P>
+    </div>
+   
+     <div class ="objeto-enemigo"id="enemigo" style="top:3180px; left:0px;" data-velocidad="2" >
+        <p><strong>Enemigo2</strong></P>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Variables globales ANTES de cargar el script principal
+    window.gameRoutes = {
+        enemiesJson: "{{ path('game_enemies_players_json', {'id': '__ID__'}) }}"
+    };
+    window.spriteBasePath = "{{ asset('images/sprites/') }}";
+</script>
+<script src="{{ asset('js/ArrayRunScript/nivel-1.js') }}?v={{ 'now'|date('U') }}"></script>
+{% endblock %}

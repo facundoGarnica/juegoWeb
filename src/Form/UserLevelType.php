@@ -15,10 +15,11 @@ class UserLevelType extends AbstractType
             ->add('completado')
             ->add('tiempo_usado')
             ->add('puntosObtenidos')
-            ->add('user')
+            ->add('player')
             ->add('level')
         ;
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {

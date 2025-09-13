@@ -171,5 +171,4 @@ class GameController extends AbstractController
         return new JsonResponse($data);
     }
 
-
 }

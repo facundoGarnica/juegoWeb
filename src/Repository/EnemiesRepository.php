@@ -20,6 +20,20 @@ class EnemiesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Enemies::class);
     }
+    
+    /**
+     * Trae todos los enemies de un Game con sus sprites
+     */
+    public function findEnemiesWithSpritesByGame(int $gameId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->leftJoin('e.sprites', 's')->addSelect('s')
+            ->leftJoin('e.game', 'g')
+            ->andWhere('g.id = :gameId')
+            ->setParameter('gameId', $gameId)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Enemies[] Returns an array of Enemies objects
