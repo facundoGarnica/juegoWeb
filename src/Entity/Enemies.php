@@ -6,7 +6,6 @@ use App\Repository\EnemiesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Sprite;
 
 #[ORM\Entity(repositoryClass: EnemiesRepository::class)]
 class Enemies
@@ -31,8 +30,7 @@ class Enemies
     #[ORM\OneToMany(targetEntity: LevelEnemies::class, mappedBy: 'enemies')]
     private Collection $levelEnemies;
 
-    // 🔹 Cambiado mappedBy de 'enemies_id' a 'enemies'
-    #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'enemies')]
+    #[ORM\OneToMany(mappedBy: 'enemies', targetEntity: Sprite::class, cascade: ['persist', 'remove'])]
     private Collection $sprites;
 
     #[ORM\ManyToOne(inversedBy: 'enemies')]
@@ -134,7 +132,6 @@ class Enemies
     {
         if (!$this->sprites->contains($sprite)) {
             $this->sprites->add($sprite);
-            // 🔹 Usar setEnemies, no setEnemiesId
             $sprite->setEnemies($this);
         }
 

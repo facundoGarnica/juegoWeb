@@ -27,4 +27,5 @@ class UserLevel1Type extends AbstractType
             'data_class' => UserLevel::class,
         ]);
     }
+    
 }

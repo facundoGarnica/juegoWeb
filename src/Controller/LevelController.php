@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\GameRepository;
+
 
 #[Route('/level')]
 class LevelController extends AbstractController
@@ -82,5 +85,50 @@ class LevelController extends AbstractController
         }
 
         return $this->redirectToRoute('app_level_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+     #[Route('/api/levels/{gameId}', name: 'api_levels_by_game', methods: ['GET'], requirements: ['gameId' => '\d+'])]
+    public function allLevelsByGame(
+        int $gameId,
+        GameRepository $gameRepository,
+        LevelRepository $levelRepository
+    ): JsonResponse {
+        error_log("API: Buscando niveles para juego ID: " . $gameId);
+        
+        // Buscar el juego
+        $game = $gameRepository->find($gameId);
+
+        if (!$game) {
+            error_log("API: Juego con ID $gameId no encontrado");
+            return new JsonResponse([
+                'success' => false,
+                'message' => "Juego con ID $gameId no encontrado"
+            ], 404);
+        }
+
+        // Buscar todos los niveles del juego, ordenados por lvlNumber
+        $levels = $levelRepository->findBy(
+            ['game' => $game], 
+            ['lvlNumber' => 'ASC'] // Ordenar por número de nivel
+        );
+        error_log("API: Niveles encontrados: " . count($levels));
+
+        // Preparar JSON
+        $data = [];
+        foreach ($levels as $level) {
+            $data[] = [
+                'id' => $level->getId(),
+                'nombre' => $level->getNombre(),
+                'descripcion' => $level->getDescripcion(),
+                'dificultad' => $level->getDificultad(),
+                'lvlNumber' => $level->getLvlNumber(), // ← Campo agregado
+            ];
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'gameId' => $gameId,
+            'levels' => $data
+        ]);
     }
 }

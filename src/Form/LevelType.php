@@ -14,6 +14,7 @@ class LevelType extends AbstractType
         $builder
             ->add('nombre')
             ->add('descripcion')
+            ->add('lvlNumber')
             ->add('dificultad')
             ->add('game')
         ;
@@ -25,4 +26,7 @@ class LevelType extends AbstractType
             'data_class' => Level::class,
         ]);
     }
+
+    
+
 }

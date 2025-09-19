@@ -1,28 +1,55 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}ArrayRun{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/ArrayRun.css') }}">
 {% endblock %}
 {% block body %}
-<!-- Pasar variables globales !-->
-<script>
-    const gameId = {{ id }};
-    const userId = {{ userId|default('null') }};
-    const spritesBasePath = "{{ asset('images/sprites/') }}";
-    const enemiesJsonPath = "{{ path('game_enemies_json', {'id': id}) }}";
-</script>
+<div class="menu-container">
+    <h1 class="game-title">ARRAYRUN</h1>
 
-<script src="{{ asset('js/arrayrun.js') }}"></script>
-
-<h1>ArrayRun</h1>
-
-<div id="game-container">
-    <div id="ogro" class="enemy-slot"></div>
-    <div id="profesor" class="enemy-slot"></div>
+    <div class="buttons-container">
+        <button class="botonJuego" id="btnJugar"> Jugar</button>
+        <button class="botonJuego" id="btnInstrucciones"> Instrucciones</button>
+        <button class="botonJuego" id="btnOpciones"> Opciones</button>
+        <a href="{{ path('app_home') }}"><button class="botonJuego" id="btnMenu"> Regresar al menú</button></a>
+    </div>
 </div>
 
+<div class="version">v1.0.0</div>
 
-<script src="{{ asset('js/ArrayRun_enemies.js') }}"></script>
+<div id="modalNivel">
+    <div class="modal-content">
+        <button class="close-btn">×</button>
+        <h2 class="modal-title">SELECCIONAR NIVEL</h2>
+
+        <div class="niveles-grid" id="nivelesGrid"></div>
+
+        <div class="nivel-info">
+            <h3>Selecciona un nivel</h3>
+            <p></p>
+            <p><strong></strong></p>
+            <div class="info-player"></div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-action" disabled>SELECCIONAR UN NIVEL</button>
+            <button class="btn-action btn-secondary">CANCELAR</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.playerId = {{ app.user.players|first.id ?? 'null' }};
+    window.apiConfig = {
+        levelsByGameUrl: "{{ path('api_levels_by_game', {'gameId': game.id}) }}",
+        userLevelUrl: "{{ path('app_user_level_by_player_and_level', {'playerId': '__PLAYER__', 'levelId': '__LEVEL__'}) }}",
+        nivelUrlTemplate: "/nivelarray/__NUM__" // <-- placeholder válido en JS
+    };
+</script>
+
+<script src="{{ asset('js/ArrayRunMenu.js') }}"></script>
+
+
+
 
 {% endblock %}

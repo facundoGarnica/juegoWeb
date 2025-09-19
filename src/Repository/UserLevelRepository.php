@@ -50,4 +50,17 @@ class UserLevelRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findPlayerLevelByUserAndLevel(int $playerId, int $levelId): ?UserLevel
+    {
+        return $this->createQueryBuilder('ul')
+            ->join('ul.player', 'p')
+            ->join('ul.level', 'l')
+            ->andWhere('p.id = :playerId')
+            ->andWhere('l.id = :levelId')
+            ->setParameter('playerId', $playerId)
+            ->setParameter('levelId', $levelId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

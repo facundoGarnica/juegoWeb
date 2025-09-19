@@ -1,25 +1,546 @@
-#game-container {
-    width: 100%;    
-    height: 600px;  
+/* Reset y configuración básica */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+    color: #00ff41;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Efecto de matriz de fondo */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+height: 100%;
+    background-image:
+        linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: -1;
+}
+
+/*Inicio Menu */
+
+
+/* Contenedor principal del menú */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+}
+
+/* Título del juego */
+.game-title {
+    font-size: 4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #00ff41;
+    text-shadow:
+        0 0 10px #00ff41,
+        0 0 20px #00ff41,
+        0 0 30px #00ff41;
+    letter-spacing: 0.2em;
+    position: relative;
+}
+
+.game-title::before {
+    content: '< ';
+    color: #ff6b6b;
+}
+
+.game-title::after {
+    content: ' />';
+    color: #ff6b6b;
+}
+
+/* Contenedor de botones */
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Estilos de botones */
+.botonJuego {
+    width: 100%;
+    max-width: 300px;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #00ff41;
+    background: transparent;
+    border: 2px solid #00ff41;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     position: relative;
     overflow: hidden;
-    border: 2px solid #333; /* Para visualizar mejor los límites - opcional */
-    background: #f0f0f0; /* Fondo para ver mejor el área - opcional */
 }
 
-.enemy-slot {
+.botonJuego::before {
+    content: '';
     position: absolute;
-    width: 64px;  
-    height: 64px;
-    /* Eliminamos cualquier restricción que pueda limitar el movimiento */
-    left: 0; /* Posición inicial */
-    z-index: 10; /* Asegurar que esté visible */
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+    transition: left 0.5s;
 }
 
-/* Asegurar que las imágenes no interfieran */
-.enemy-slot img {
-    display: block;
-    width: 64px;
-    height: 64px;
-    object-fit: contain; /* Mantener proporciones */
+.botonJuego:hover {
+    color: #0f0f23;
+    background: #00ff41;
+    box-shadow:
+        0 0 20px #00ff41,
+        inset 0 0 20px rgba(0, 255, 65, 0.1);
+    transform: translateY(-2px);
+}
+
+.botonJuego:hover::before {
+    left: 100%;
+}
+
+.botonJuego:active {
+    transform: translateY(0);
+    box-shadow: 0 0 10px #00ff41;
+}
+
+/* Botón especial para "Jugar" */
+#btnJugar {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+}
+
+#btnJugar:hover {
+    background: #ff6b6b;
+    color: #0f0f23;
+    box-shadow:
+        0 0 20px #ff6b6b,
+        inset 0 0 20px rgba(255, 107, 107, 0.1);
+}
+
+#btnJugar::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.2), transparent);
+}
+
+/* Versión del juego */
+.version {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.8rem;
+    color: #666;
+    font-family: 'Courier New', monospace;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .botonJuego {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+
+    .menu-container {
+        padding: 1rem;
+    }
+
+    .buttons-container {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-title {
+        font-size: 2rem;
+        letter-spacing: 0.1em;
+    }
+
+    .botonJuego {
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
+    }
+}
+
+/* Efectos adicionales para el tema de programación */
+.menu-container::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: -5%;
+    width: 110%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00ff41, transparent);
+    opacity: 0.3;
+}
+
+.menu-container::before {
+    content: '';
+    position: absolute;
+    bottom: 10%;
+    left: -5%;
+    width: 110%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00ff41, transparent);
+    opacity: 0.3;
+}
+
+/*Fin Menu */
+
+
+
+/* Modal de niveles */
+#modalNivel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+    /* Inicialmente oculto */
+}
+
+.modal-content {
+    background: linear-gradient(145deg, #1a1a3a, #0f0f23);
+    border: 2px solid #00ff41;
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow:
+        0 0 30px rgba(0, 255, 65, 0.3),
+        inset 0 0 20px rgba(0, 255, 65, 0.05);
+}
+
+/* Título del modal */
+.modal-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #00ff41;
+    text-shadow: 0 0 10px #00ff41;
+    letter-spacing: 0.1em;
+    font-family: 'Courier New', monospace;
+}
+
+.modal-title::before {
+    content: '[ ';
+    color: #ff6b6b;
+}
+
+.modal-title::after {
+    content: ' ]';
+    color: #ff6b6b;
+}
+
+/* Botón cerrar */
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: 2px solid #ff6b6b;
+    color: #ff6b6b;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: #ff6b6b;
+    color: #0f0f23;
+    transform: rotate(180deg);
+    box-shadow: 0 0 15px #ff6b6b;
+}
+
+/* Grid de niveles */
+.niveles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    max-width: 500px;
+    /* Limitar ancho máximo del grid */
+    margin: 0 auto 2rem auto;
+    /* Centrar el grid */
+}
+
+/* Cuadrados de nivel */
+.nivel-square {
+    width: 60px;
+    height: 60px;
+    background: transparent;
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+}
+
+.nivel-square::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nivel-square:hover {
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow:
+        0 0 15px rgba(0, 255, 65, 0.5),
+        inset 0 0 15px rgba(0, 255, 65, 0.1);
+    transform: scale(1.1);
+    border-color: #00ff88;
+}
+
+.nivel-square:hover::before {
+    left: 100%;
+}
+
+.nivel-square:active {
+    transform: scale(0.95);
+}
+
+/* Estados de niveles */
+.nivel-completado {
+    border-color: #00ff41;
+    background: rgba(0, 255, 65, 0.1);
+    color: #00ff41;
+}
+
+.nivel-completado::after {
+    content: '✓';
+    position: absolute;
+top: 2px;
+    right: 4px;
+    font-size: 0.6rem;
+    color: #00ff41;
+}
+
+.nivel-bloqueado {
+    border-color: #666;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.nivel-bloqueado:hover {
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    border-color: #666;
+}
+
+.nivel-actual {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    animation: pulse 2s infinite;
+}
+
+.nivel-square.selected {
+    background-color: rgba(76, 175, 80, 0.3);
+    border: 2px solid #4CAF50;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(255, 107, 107, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+    }
+}
+
+/* Información del nivel */
+.nivel-info {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(0, 255, 65, 0.05);
+    border: 1px solid #00ff41;
+    border-radius: 5px;
+    min-height: 80px;
+    /* Altura mínima para evitar saltos */
+}
+
+.nivel-info h3 {
+    color: #00ff41;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
+}
+
+.nivel-info p {
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 0.5rem;
+}
+
+/* Botones de acción */
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-action {
+    padding: 0.8rem 2rem;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    background: transparent;
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-action:hover:not(:disabled) {
+    background: #00ff41;
+    color: #0f0f23;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+}
+
+.btn-action:disabled {
+    border-color: #666;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.btn-secondary {
+    border-color: #666;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background: #666;
+    color: #0f0f23;
+    box-shadow: 0 0 15px rgba(102, 102, 102, 0.5);
+}
+
+/* Responsive para modal */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .modal-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .niveles-grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        gap: 0.6rem;
+        max-width: 400px;
+    }
+
+    .nivel-square {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+
+    .nivel-completado::after {
+        font-size: 0.5rem;
+        top: 1px;
+        right: 3px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .niveles-grid {
+        grid-template-columns: repeat(6, 1fr);
+        max-width: 350px;
+    }
+
+    .nivel-square {
+        width: 45px;
+        height: 45px;
+        font-size: 0.9rem;
+    }
+
+        .nivel-completado::after {
+            font-size: 0.4rem;
+            top: 1px;
+            right: 2px;
+        }
 }

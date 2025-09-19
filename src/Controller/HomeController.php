@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\UserLevelRepository;
 use App\Repository\GameRepository;
+use App\Repository\PlayerRepository;
+use App\Repository\EnemiesRepository;
 use Twig\Environment;
 
 class HomeController extends AbstractController
@@ -61,12 +63,15 @@ class HomeController extends AbstractController
         return $this->render('menuFormularios.html.twig');
     }
 
-    //ruta para el juego seleccionado
+    //ruta para el juego seleccionado, aca entra al juego elegido, verifica si el usuario esta logueado y 
+    // trae todos los personajes con sus sprites
     #[Route('/juego/{id}/{userId}', name: 'juego_pad')]
     public function juegoPad(
         int $id,
         ?int $userId,
         GameRepository $gameRepository,
+        PlayerRepository $playerRepository,
+        EnemiesRepository $enemiesRepository,
         Environment $twig
     ): Response {
         $game = $gameRepository->find($id);
@@ -83,7 +88,6 @@ class HomeController extends AbstractController
             $userId = $user ? $user->getId() : null;
         }
 
-        // 🔹 Buscar template en /templates/{GameName}/index.html.twig
         $templateName = $gameName . '/index.html.twig';
 
         if (!$twig->getLoader()->exists($templateName)) {
@@ -91,11 +95,12 @@ class HomeController extends AbstractController
         }
 
         return $this->render($templateName, [
-            'id'     => $id,
-            'userId' => $userId,
-            'nombre' => $gameName,
+            'id'      => $id,
+            'game'    => $game,
+            'userId'  => $userId,
         ]);
     }
+
 
 
 

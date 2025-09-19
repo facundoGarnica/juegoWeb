@@ -33,6 +33,9 @@ class Level
     #[ORM\ManyToOne(inversedBy: 'levels')]
     private ?Game $game = null;
 
+    #[ORM\Column]
+    private ?int $lvlNumber = null;
+
     public function __construct()
     {
         $this->userLevels = new ArrayCollection();
@@ -159,5 +162,17 @@ class Level
         }
         return (string) $this->nombre;
     }
+
+   public function getLvlNumber(): ?int
+   {
+       return $this->lvlNumber;
+   }
+
+   public function setLvlNumber(int $lvlNumber): static
+   {
+       $this->lvlNumber = $lvlNumber;
+
+       return $this;
+   }
 
 }

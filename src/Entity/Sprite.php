@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use App\Repository\SpriteRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Player;
-use App\Entity\Enemies;
 
 #[ORM\Entity(repositoryClass: SpriteRepository::class)]
 class Sprite
@@ -19,6 +17,7 @@ class Sprite
     private ?Player $player = null;
 
     #[ORM\ManyToOne(targetEntity: Enemies::class, inversedBy: 'sprites')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Enemies $enemies = null;
 
     #[ORM\Column(length: 255, nullable: true)]
