@@ -14,7 +14,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.jumpSpeed = 1000;
         this.facingRight = true;
 
-        this.vidaTotal = 3;
+        this.vidaTotal = 55;
         this.vidaActual = this.vidaTotal;
 
         this.invulnerable = false;

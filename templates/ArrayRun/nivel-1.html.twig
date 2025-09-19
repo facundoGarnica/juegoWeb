@@ -1,33 +1,35 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}ArrayRun Phaser Nivel 1{% endblock %}
-
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/ArrayRun-lvl1.css') }}">
 {% endblock %}
-
 {% block body %}
     <div id="game-container" style="width: 100%; height: 100vh; overflow: hidden;"></div>
-
 {% endblock %}
-
 {% block javascripts %}
     <!-- Phaser CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
-
-    <!-- Rutas globales para módulos -->
+    
+    <!-- ✅ VARIABLES GLOBALES PRIMERO (antes del módulo) -->
     <script>
-        window.background_path = "{{ asset('images/ArrayRun') }}"; 
-    </script>
-    <!-- Path del menu -->
-    <script>
+        // Variables de rutas y assets
+        window.background_path = "{{ asset('images/ArrayRun') }}";
         const MENU_URL = "{{ path('app_arrayrun') }}";
+        
+        // ✅ Variables del juego (CRÍTICO: antes del módulo)
+        const CURRENT_PLAYER_ID = {{ player.id }};
+        const CURRENT_LEVEL_ID = {{ numero }};
+        const SAVE_LEVEL_PATH = "{{ path('app_user_level_save') }}";
+        
+        // ✅ Debug para verificar que se generan correctamente
+        console.log('=== VARIABLES GLOBALES ===');
+        console.log('CURRENT_PLAYER_ID:', CURRENT_PLAYER_ID);
+        console.log('CURRENT_LEVEL_ID:', CURRENT_LEVEL_ID);
+        console.log('SAVE_LEVEL_PATH:', SAVE_LEVEL_PATH);
+        console.log('MENU_URL:', MENU_URL);
+        console.log('===========================');
     </script>
-    
-    
-    <!-- Script principal del juego -->
+   
+    <!-- ✅ Script principal del juego DESPUÉS de las variables -->
     <script type="module" src="{{ asset('js/ArrayRunScript/game.js') }}"></script>
-
-    
-
 {% endblock %}

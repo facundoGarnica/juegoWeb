@@ -37,6 +37,16 @@ export default class Level1 extends Phaser.Scene {
 
 
         // =========================
+        // Menu de pausa
+        // =========================
+        // Tecla ESC para pausar
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.scene.pause();          // pausar Level1
+            this.scene.launch('Pause');  // lanzar escena de pausa
+        });
+
+
+        // =========================
         // Grupo de objetos que se puedan agarrar
         // =========================
         this.objetosInteractuables = this.physics.add.group();
@@ -102,7 +112,17 @@ export default class Level1 extends Phaser.Scene {
         // =========================
         // Escalera modular
         // =========================
-        this.escaleras = new Escaleras(this, this.player, this.scale.width * 0.1345, this.scale.height * 0.912);
+        this.escaleras = new Escaleras(
+            this,
+            this.player,
+            this.scale.width * 0.1345,
+            this.scale.height * 0.912,
+            10,     // cantidad de escalones
+            0.05,   // ancho del escalón (5% del ancho de pantalla)
+            0.03,   // alto del escalón (3% del alto de pantalla)
+            39,     // offset X en píxeles (se convertirá a proporción)
+            30      // offset Y en píxeles (se convertirá a proporción)
+        );
 
         // =========================
         // Interruptor SI-NO
@@ -116,7 +136,6 @@ export default class Level1 extends Phaser.Scene {
         // =========================
 
         this.llave = new Llave(this, this.scale.width * 0.6, this.scale.height * 0.75, 'llave');
-        this.llave.setScale(0.05);
 
         // Overlap con jugador
         this.physics.add.overlap(this.player, this.llave, () => {
@@ -185,11 +204,10 @@ export default class Level1 extends Phaser.Scene {
             { x: this.scale.width * 0.87, y: this.scale.height * 0.43 }  // derecha
         ];
 
-
+        this.totalMonedasNivel = positions.length;
 
         positions.forEach(pos => {
-            const moneda = new Monedas(this, pos.x, pos.y, 'moneda');
-            moneda.setScale(3);
+            const moneda = new Monedas(this, pos.x, pos.y, 'moneda', 3);
             this.monedas.add(moneda);
         });
 
@@ -252,38 +270,108 @@ export default class Level1 extends Phaser.Scene {
 
 
         // =========================
-        // Ajuste responsive
+        // Ajuste responsive mejorado
         // =========================
         this.scale.on('resize', ({ width, height }) => {
             // Fondo
             this.background.displayWidth = width;
             this.background.displayHeight = height;
 
-            // Plataformas
-            this.piso.setDisplaySize(width, 20).setPosition(width / 2, height * 0.95).refreshBody();
-            this.plataforma2.setDisplaySize(width * 0.7, 20).setPosition(width / 2 + width * 0.18, height * 0.56).refreshBody();
-            this.plataforma3.setDisplaySize(width * 0.5, 20).setPosition(width / 2 - width * 0.25, height * 0.56).refreshBody();
+    // Plataformas
+    this.piso.setDisplaySize(width, 20).setPosition(width / 2, height * 0.95).refreshBody();
+    this.plataforma2.setDisplaySize(width * 0.7, 20).setPosition(width / 2 + width * 0.18, height * 0.561).refreshBody();
+    this.plataforma3.setDisplaySize(width * 0.5, 20).setPosition(width / 2 - width * 0.43, height * 0.56).refreshBody();
+    this.plataforma4.setDisplaySize(width * 0.05, 20).setPosition(width / 10 + width * 0.07, height * 0.45).refreshBody();
 
-            // Jugador y enemigos
-            this.player.x = width * 0.9;
-            this.player.resize(width, height);
+    // Jugador y enemigos
+    if (this.player && typeof this.player.resize === 'function') {
+        this.player.resize(width, height);
+    }
 
-            this.enemy1.maxX = width * 0.8;
-            this.enemy2.maxX = width * 0.8;
+    if (this.enemy1) {
+        this.enemy1.updateRange(0, width * 0.8);
+        if (typeof this.enemy1.resize === 'function') {
             this.enemy1.resize(width, height);
+        }
+    }
+
+    if (this.enemy2) {
+        this.enemy2.updateRange(0, width * 0.8);
+        if (typeof this.enemy2.resize === 'function') {
             this.enemy2.resize(width, height);
+        }
+    }
 
-            // Escaleras
+    // Llave responsive
+    if (this.llave && typeof this.llave.resize === 'function') {
+        this.llave.resize(width, height);
+    }
+
+    // Interruptor responsive  
+    if (this.interruptor && typeof this.interruptor.resize === 'function') {
+        this.interruptor.resize(width, height);
+    }
+
+    // Mesa responsive
+    if (this.mesa) {
+        this.mesa.updateLimits(width * 0.1, width * 1);
+        if (typeof this.mesa.resize === 'function') {
+            this.mesa.resize(width, height);
+        }
+    }
+
+    // ✅ Escaleras responsive - MEJORADO
+    if (this.escaleras && typeof this.escaleras.resize === 'function') {
+        try {
             this.escaleras.resize(width, height);
+            console.log(`Escaleras redimensionadas a: ${width}x${height}`); // Debug opcional
+        } catch (error) {
+            console.error('Error al redimensionar escaleras:', error);
+        }
+    }
 
-            // HUD
-            this.corazones.forEach((corazon, i) => {
-                corazon.setPosition(width - 20 - (i * 50), 20);
-            });
-
-            // Checkpoint
-            this.checkpoint.resize(width, height);
+    // Monedas responsive
+    if (this.monedas && this.monedas.children) {
+        this.monedas.children.iterate(moneda => {
+            if (moneda && typeof moneda.resize === 'function') {
+                moneda.resize(width, height);
+            }
         });
+    }
+
+    // HUD de corazones responsive mejorado
+    const margin = Math.max(20, width * 0.02); // Margen responsivo
+    const heartSpacing = Math.max(30, width * 0.03); // Espaciado responsivo
+    this.corazones.forEach((corazon, i) => {
+        if (corazon) {
+            corazon.setPosition(width - margin - (i * heartSpacing), margin);
+            // Escala responsiva para corazones
+            const heartScale = Math.min(0.15, width * 0.0001);
+            corazon.setScale(Math.max(0.08, heartScale));
+        }
+    });
+
+    // Puntaje responsive
+    if (this.puntajeTexto) {
+        const fontSize = Math.max(16, width * 0.02);
+        this.puntajeTexto.setStyle({
+            fontSize: `${fontSize}px`,
+            strokeThickness: Math.max(1, fontSize * 0.1)
+        });
+    }
+
+    // Checkpoint responsive
+    if (this.checkpoint && typeof this.checkpoint.resize === 'function') {
+        this.checkpoint.resize(width, height);
+    }
+
+    // Debug info para escaleras (opcional - remover en producción)
+    if (this.escaleras && typeof this.escaleras.getDebugInfo === 'function') {
+        const debugInfo = this.escaleras.getDebugInfo();
+        console.log('Debug Escaleras:', debugInfo);
+    }
+});
+
     }
 
     // =========================
@@ -296,7 +384,17 @@ export default class Level1 extends Phaser.Scene {
         const puntaje = puntajeCalc.calcular(this.player, tiempoFinal);
 
         this.scene.stop();
-        this.scene.start('GameCompleteScene', { puntaje, tiempo: tiempoFinal });
+
+        this.scene.start('GameCompleteScene', {
+            puntaje,
+            tiempo: tiempoFinal,
+            monedas: this.player.puntaje,
+            totalMonedas: this.totalMonedasNivel,
+            vidaActual: this.player.vidaActual,
+            vidaTotal: this.player.vidaTotal
+        });
+
+
     }
 
     // =========================

@@ -2,6 +2,7 @@ import BootScene from './scenes/BootScene.js';
 import GameCompleteScene from './scenes/GameCompleteScene .js';
 import GameOverScene from './scenes/GameOverScene.js';
 import Level1 from './scenes/Level1.js';
+import Pause from './scenes/Pause.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config = {
         mode: Phaser.Scale.RESIZE,            // siempre ocupa 100% de la ventana
         autoCenter: Phaser.Scale.CENTER_BOTH  // centra el canvas
     },
-    scene: [BootScene, Level1, GameOverScene, GameCompleteScene]
+    scene: [BootScene, Level1, GameOverScene, GameCompleteScene, Pause]
 };
 
 const game = new Phaser.Game(config);

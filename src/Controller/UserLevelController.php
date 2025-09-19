@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\UserLevel;
+use App\Entity\Player;
+use App\Entity\Level;
 use App\Form\UserLevel1Type;
 use App\Repository\UserLevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,6 +45,102 @@ class UserLevelController extends AbstractController
         ]);
     }
 
+    // ✅ IMPORTANTE: Rutas específicas ANTES de las rutas con parámetros
+    #[Route('/save', name: 'app_user_level_save', methods: ['POST'])]
+    public function save(Request $request, UserLevelRepository $userLevelRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['playerId'], $data['levelId'], $data['puntosObtenidos'], $data['tiempoUsado'], $data['completado'])) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Faltan datos obligatorios'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $playerId = $data['playerId'];
+        $levelId = $data['levelId'];
+        $puntos = (int) $data['puntosObtenidos'];
+        $tiempo = (int) $data['tiempoUsado'];
+        $completado = (bool) $data['completado'];
+
+        // Buscar si ya existe un registro para este jugador y nivel
+        $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
+
+        if ($userLevel) {
+            // Si existe, solo actualizar si el nuevo puntaje es mayor
+            if ($puntos > $userLevel->getPuntosObtenidos()) {
+                $userLevel->setPuntosObtenidos($puntos)
+                        ->setTiempoUsado($tiempo)
+                        ->setCompletado($completado);
+                $entityManager->flush();
+            }
+        } else {
+            // Si no existe, crear uno nuevo
+            $userLevel = new UserLevel();
+            $player = $entityManager->getRepository(Player::class)->find($playerId);
+            $level = $entityManager->getRepository(Level::class)->find($levelId);
+
+            if (!$player || !$level) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Jugador o nivel no encontrados'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            $userLevel->setPlayer($player)
+                    ->setLevel($level)
+                    ->setPuntosObtenidos($puntos)
+                    ->setTiempoUsado($tiempo)
+                    ->setCompletado($completado);
+
+            $entityManager->persist($userLevel);
+            $entityManager->flush();
+        }
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'id' => $userLevel->getId(),
+                'puntosObtenidos' => $userLevel->getPuntosObtenidos(),
+                'tiempoUsado' => $userLevel->getTiempoUsado(),
+                'completado' => $userLevel->isCompletado()
+            ]
+        ]);
+    }
+
+    #[Route('/player/{playerId}/level/{levelId}', name: 'app_user_level_by_player_and_level', methods: ['GET'])]
+    public function getPlayerLevelByUserAndLevel(
+        int $playerId,
+        int $levelId,
+        UserLevelRepository $userLevelRepository
+    ): JsonResponse {
+        $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
+
+        if (!$userLevel) {
+            return $this->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'No se encontró progreso para este jugador en este nivel',
+            ], Response::HTTP_OK);
+        }
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'id' => $userLevel->getId(),
+                'completado' => $userLevel->isCompletado(),
+                'tiempo_usado' => $userLevel->getTiempoUsado(),
+                'puntos_obtenidos' => $userLevel->getPuntosObtenidos(),
+                'playerId' => $userLevel->getPlayer()->getId(),
+                'playerNombre' => $userLevel->getPlayer()->getUser()->getUsername(),
+                'levelId' => $userLevel->getLevel()->getId(),
+                'levelNombre' => $userLevel->getLevel()->getNombre()
+            ]
+        ]);
+    }
+
+    // ✅ Rutas con parámetros AL FINAL (después de las rutas específicas)
     #[Route('/{id}', name: 'app_user_level_show', methods: ['GET'])]
     public function show(UserLevel $userLevel): Response
     {
@@ -79,38 +177,4 @@ class UserLevelController extends AbstractController
 
         return $this->redirectToRoute('app_user_level_index', [], Response::HTTP_SEE_OTHER);
     }
-
-   #[Route('/player/{playerId}/level/{levelId}', name: 'app_user_level_by_player_and_level', methods: ['GET'])]
-public function getPlayerLevelByUserAndLevel(
-    int $playerId,
-    int $levelId,
-    UserLevelRepository $userLevelRepository
-): JsonResponse {
-    $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
-
-    if (!$userLevel) {
-        // ⚠️ Cambié el status de 404 a 200
-        return $this->json([
-            'success' => false,
-            'data' => null,
-            'message' => 'No se encontró progreso para este jugador en este nivel',
-        ], Response::HTTP_OK);
-    }
-
-    return $this->json([
-        'success' => true,
-        'data' => [
-            'id' => $userLevel->getId(),
-            'completado' => $userLevel->isCompletado(),
-            'tiempo_usado' => $userLevel->getTiempoUsado(),
-            'puntos_obtenidos' => $userLevel->getPuntosObtenidos(),
-            'playerId' => $userLevel->getPlayer()->getId(),
-            'playerNombre' => $userLevel->getPlayer()->getUser()->getUsername(),
-            'levelId' => $userLevel->getLevel()->getId(),
-            'levelNombre' => $userLevel->getLevel()->getNombre()
-        ]
-    ]);
-}
-
-
 }
