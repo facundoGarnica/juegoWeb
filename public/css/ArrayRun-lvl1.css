@@ -1,91 +1,12 @@
-#fondoJuego {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;   /* ocupa todo el ancho de la pantalla */
-  height: 100vh;  /* ocupa todo el alto de la pantalla */
-  background-image: url("../images/ArrayRun/fondo-nivel-1.png");
-  background-size: 100% 100%;   /* fuerza la imagen a estirarse */
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: -1;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-.objeto-jugador {
-  width: 40px;   /* collider angosto */
-  height: 90px;  /* altura lógica */
- /* border: 2px solid red; /* visible para debug, podés quitarlo */
-  background-color: transparent;
-  position: absolute;
-  overflow: visible; /* permite que el sprite sobresalga */
-}
-
-#imgPlayer {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%); /* centrar dentro del cubo */
-  height: 100px;   /* tamaño visual independiente */
-  width: auto;     /* mantiene proporciones */
-  object-fit: contain;
-  pointer-events: none; /* no interfiere en eventos */
-}
-
-
-
-
-.objeto-enemigo {
-  width: 100px;
-  height: 100px;
-  border: 5px solid #0400ec;   /* borde más grueso */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-  position: absolute;       /* permite moverlo libremente */
-}
-
-
-
-/* DATO: AUMENTAR TOP SIGNIFICA BAJAR EL OBJETO*/
-
-/*========================== Objetos ========================== */
-.objeto-silla {
-    position: absolute;   
-    width: 100px;
-    height: 100px;
-    background-image: url('../images/Objetos/silla.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.objeto-llave {
-    position: absolute;   
-    width: 60px;
-    height: 60px;
-    background-image: url('../images/Objetos/llave.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center; 
-}
-
-.objeto-pilaLibros {
-    position: absolute;   
-    width: 100px;
-    height: 100px;
-    background-image: url('../images/Objetos/pilaLibros.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center; 
-}
-
-.objeto-mesa {
-    position: absolute;      
-    width: 150px;
-    height: 100px;
-    background-image: url('../images/Objetos/mesa.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center; 
+#game-container {
+  width: 100%;
+  height: 100%;
 }

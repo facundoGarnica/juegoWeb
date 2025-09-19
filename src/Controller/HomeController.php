@@ -88,13 +88,6 @@ class HomeController extends AbstractController
             $userId = $user ? $user->getId() : null;
         }
 
-        // 🔹 Buscar Players + Sprites
-       // $players = $playerRepository->findPlayersWithSpritesByGame($id);
-
-        // 🔹 Buscar Enemies + Sprites
-      //  $enemies = $enemiesRepository->findEnemiesWithSpritesByGame($id);
-
-        // 🔹 Buscar template en /templates/{GameName}/index.html.twig
         $templateName = $gameName . '/index.html.twig';
 
         if (!$twig->getLoader()->exists($templateName)) {
@@ -105,8 +98,6 @@ class HomeController extends AbstractController
             'id'      => $id,
             'game'    => $game,
             'userId'  => $userId,
-         //   'players' => $players,
-         //   'enemies' => $enemies,
         ]);
     }
 

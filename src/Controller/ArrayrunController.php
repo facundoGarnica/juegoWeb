@@ -13,13 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Environment;
 class ArrayrunController extends AbstractController
 {
-    #[Route('/arrayrun', name: 'app_arrayrun')]
-    public function index(): Response
-    {
-        return $this->render('ArrayRun/index.html.twig', [
-            'controller_name' => 'ArrayrunController',
-        ]);
-    }
+
 
     #[Route('/game/{id}/enemies', name: 'game_enemies', methods: ['GET'])]
     public function enemies(int $id, GameRepository $gameRepository, EnemiesRepository $enemiesRepository): Response
@@ -109,19 +103,45 @@ public function enemiesAndPlayersJson(
 
 
 
-  //metodo para seleccionar el nivel y enviarte al template
-    #[Route('/nivelarray/{numero}', name: 'app_gamearray_nivel', requirements: ['numero' => '\d+'], methods: ['GET'])]
+  #[Route('/nivelarray/{numero}', name: 'app_gamearray_nivel', requirements: ['numero' => '\d+'], methods: ['GET'])]
     public function nivel(int $numero, Environment $twig): Response
     {
+        // Obtener el usuario logueado
+        $user = $this->getUser();
+
+        // Si no hay usuario, redirigir al menú principal
+        if (!$user) {
+            return $this->redirectToRoute('app_arrayrun');
+        }
+
+        // Ruta del template del nivel
         $templatePath = sprintf('ArrayRun/nivel-%d.html.twig', $numero);
 
+        // Verificar que exista el template
         if (!$twig->getLoader()->exists($templatePath)) {
             return new Response('', Response::HTTP_NO_CONTENT); // 204 No Content
         }
 
+        // Renderizar el nivel pasando el usuario
         return $this->render($templatePath, [
-            'numero' => $numero
+            'numero' => $numero,
+            'user'   => $user,
+            'player' => $user->getPlayers()->first() // opcional: primer personaje
         ]);
     }
+
+   #[Route('/arrayrun', name: 'app_arrayrun')]
+    public function index(GameRepository $gameRepository): Response
+    {
+        $game = $gameRepository->find(1); // ⚡ Nivel/menu principal
+        if (!$game) {
+            throw $this->createNotFoundException('Juego no encontrado.');
+        }
+        return $this->render('ArrayRun/index.html.twig', [
+            'controller_name' => 'ArrayrunController',
+            'game' => $game
+        ]);
+    }
+
 
 }
