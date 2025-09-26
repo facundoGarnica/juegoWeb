@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,7 @@ use App\Repository\UserLevelRepository;
 use App\Repository\GameRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\EnemiesRepository;
+use App\Repository\UserRepository;
 use Twig\Environment;
 
 class HomeController extends AbstractController
@@ -46,7 +48,7 @@ class HomeController extends AbstractController
 
         // Flash si hubo error en login
         if ($error) {
-            $this->addFlash('error', 'Credenciales incorrectas: ' . $error->getMessage());
+            $this->addFlash('error', 'Usuario o contraseña incorrecta');
         }
 
         return $this->render('home/index.html.twig', [
@@ -57,51 +59,56 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/formularios', name: 'app_formularios')]
+
+
+#[Route('/juego/{id}/{userId?}', name: 'juego_players', methods: ['GET'])]
+public function juegoPlayers(
+    int $id,
+    ?int $userId,
+    GameRepository $gameRepository,
+    PlayerRepository $playerRepository,
+    Environment $twig,
+    UserRepository $userRepository
+): Response {
+    // 1️⃣ Buscar el juego
+    $game = $gameRepository->find($id);
+    if (!$game) {
+        return new Response('Juego no encontrado', 404);
+    }
+
+    // 2️⃣ Obtener el usuario
+    $user = $userId ? $userRepository->find($userId) : $this->getUser();
+    if (!$user) {
+        return new Response('Usuario no encontrado', 404);
+    }
+
+    // 3️⃣ Obtener todos los players del juego
+    $players = $playerRepository->findBy(['game' => $game]);
+
+    // 4️⃣ Construir el nombre del template dinámico (según el nombre del juego)
+    $templateName = $game->getNombre() . '/index.html.twig';
+    if (!$twig->getLoader()->exists($templateName)) {
+        return new Response('Template no encontrado', 404);
+    }
+
+    // 5️⃣ Renderizar el template con todas las variables necesarias
+    return $this->render($templateName, [
+        'id'      => $id,
+        'game'    => $game,
+        'user'    => $user,
+        'players' => $players
+    ]);
+}
+
+
+
+
+
+
+ #[Route('/formularios', name: 'app_formularios')]
     public function formularios(): Response
     {
         return $this->render('menuFormularios.html.twig');
     }
-
-    //ruta para el juego seleccionado, aca entra al juego elegido, verifica si el usuario esta logueado y 
-    // trae todos los personajes con sus sprites
-    #[Route('/juego/{id}/{userId}', name: 'juego_pad')]
-    public function juegoPad(
-        int $id,
-        ?int $userId,
-        GameRepository $gameRepository,
-        PlayerRepository $playerRepository,
-        EnemiesRepository $enemiesRepository,
-        Environment $twig
-    ): Response {
-        $game = $gameRepository->find($id);
-
-        if (!$game) {
-            return new Response('', 204); // Juego no encontrado
-        }
-
-        $gameName = $game->getNombre();
-
-        // Si no se pasa userId, tomar del usuario logueado
-        if (!$userId) {
-            $user = $this->getUser();
-            $userId = $user ? $user->getId() : null;
-        }
-
-        $templateName = $gameName . '/index.html.twig';
-
-        if (!$twig->getLoader()->exists($templateName)) {
-            return new Response('', 204); // No existe
-        }
-
-        return $this->render($templateName, [
-            'id'      => $id,
-            'game'    => $game,
-            'userId'  => $userId,
-        ]);
-    }
-
-
-
 
 }

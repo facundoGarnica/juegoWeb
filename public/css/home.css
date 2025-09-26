@@ -624,6 +624,11 @@ body.modal-open {
 
 
 /* final Modal de Error */
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
 
 
 /* Estilos del Carrusel de Juegos */

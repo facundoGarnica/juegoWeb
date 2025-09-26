@@ -122,27 +122,26 @@ class GameController extends AbstractController
 
     #[Route('/{id}', name: 'app_game_delete', methods: ['POST'])]
     public function delete(Request $request, Game $game, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$game->getId(), $request->request->get('_token'))) {
+        {
+            if ($this->isCsrfTokenValid('delete'.$game->getId(), $request->request->get('_token'))) {
 
-            // 🔹 Borrar imagen física si existe
-            $imageName = $game->getImagenPortada();
-            if ($imageName) {
-                $imagePath = $this->getParameter('images_directory') . '/' . $imageName;
-                if (file_exists($imagePath)) {
-                    unlink($imagePath); // elimina el archivo
+                // 🔹 Borrar imagen física si existe
+                $imageName = $game->getImagenPortada();
+                if ($imageName) {
+                    $imagePath = $this->getParameter('images_directory') . '/' . $imageName;
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath); // elimina el archivo
+                    }
                 }
+
+                // 🔹 Borrar la entidad
+                $entityManager->remove($game);
+                $entityManager->flush();
             }
 
-            // 🔹 Borrar la entidad
-            $entityManager->remove($game);
-            $entityManager->flush();
+            return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    // Ver top scores por juego usando Player
     #[Route('/{id}/top-scores', name: 'app_game_top_scores', methods: ['GET'])]
     public function topScoresByGame(
         int $id,
@@ -155,14 +154,14 @@ class GameController extends AbstractController
             throw $this->createNotFoundException('Juego no encontrado.');
         }
 
-        $topScores = $userLevelRepository->findTopScoresByGame($game, 4);
+        // 🔹 Usar el método optimizado que hace JOIN directo con User
+        $topScores = $userLevelRepository->findTopScoresByGameWithUsers($game, 4);
 
         $data = [];
         foreach ($topScores as $ul) {
-            $player = $ul->getPlayer(); // <-- Ahora usamos Player
             $data[] = [
-                'player' => $player ? $player->getNombre() : 'N/A', // Nombre del jugador
-                'user'   => $player && $player->getUser() ? $player->getUser()->getUsername() : 'N/A', // Opcional
+                'player' => $ul->getPlayer() ? $ul->getPlayer()->getNombre() : 'N/A',
+                'user'   => $ul->getUser() ? $ul->getUser()->getUsername() : 'N/A', // 🔹 Ahora obtiene el usuario correcto
                 'nivel'  => $ul->getLevel() ? $ul->getLevel()->getNombre() : 'N/A',
                 'puntos' => $ul->getPuntosObtenidos(),
             ];

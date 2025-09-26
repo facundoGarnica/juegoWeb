@@ -31,7 +31,7 @@ export default class Level1 extends Phaser.Scene {
         // =========================
         // Fondo full screen
         // =========================
-        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0);
+        this.background = this.add.image(0, 0, 'background_level_1').setOrigin(0, 0);
         this.background.displayWidth = this.scale.width;
         this.background.displayHeight = this.scale.height;
 

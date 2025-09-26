@@ -1,34 +1,164 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modalNivel');
+
+    // =========================================================
+    // ASIGNAR TODOS LOS PLAYERS AL USUARIO AUTOMÁTICAMENTE
+    // =========================================================
+    if (window.apiConfig?.assignAllPlayersUrl) {
+        fetch(window.apiConfig.assignAllPlayersUrl, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Respuesta de asignar players:', data);
+                if (data.success) {
+                    console.log(`Players asignados automáticamente: ${data.totalAssigned}`);
+                    // Actualizar playerId global al primero asignado
+                    if (data.firstPlayerId) {
+                        window.playerId = data.firstPlayerId;
+                        console.log('PlayerID global actualizado a:', window.playerId);
+                    }
+                } else {
+                    console.warn('No se pudieron asignar los players:', data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Error al asignar players automáticamente:', err);
+            });
+    } else {
+        console.warn('URL para asignar players no configurada');
+    }
+
+    // =========================================================
+    // ELEMENTOS DEL DOM
+    // =========================================================
+    const modalNivel = document.getElementById('modalNivel');
+    const modalJugador = document.getElementById("modal-jugador");
     const btnJugar = document.getElementById('btnJugar');
     const closeBtn = document.querySelector('.close-btn');
     const cancelBtn = document.querySelector('.btn-secondary');
+    const closeJugador = document.querySelector(".close-player-modal");
 
     let iniciarBtn = document.querySelector('.btn-action:not(.btn-secondary)');
     let nivelSeleccionado = null;
+    let personajeSeleccionado = null;
+
+    // =========================================================
+    // VERIFICAR QUE LOS ELEMENTOS EXISTEN
+    // =========================================================
+    console.log('btnJugar encontrado:', btnJugar);
+    console.log('modalJugador encontrado:', modalJugador);
+
+    // =========================================================
+    // MODAL SELECCIONAR PERSONAJE (CARRUSEL) - MOVER AL INICIO
+    // =========================================================
+    const track = document.querySelector(".character-track");
+    const items = document.querySelectorAll(".character-item");
+    const prevBtn = document.querySelector(".character-control.prev");
+    const nextBtn = document.querySelector(".character-control.next");
+    const indicators = document.querySelectorAll(".character-indicator");
+
+    let currentIndex = 0;
 
     // ---------------------------
-    // Mostrar modal
+    // BOTÓN JUGAR - ABRIR MODAL PERSONAJE
     // ---------------------------
-    btnJugar?.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        cargarNiveles();
+    btnJugar?.addEventListener("click", () => {
+        console.log('Botón jugar clickeado');
+        if (modalJugador) {
+            modalJugador.style.display = "flex";
+            document.body.style.overflow = "hidden";
+            updateCarousel();
+            console.log('Modal jugador abierto');
+        } else {
+            console.error('Modal jugador no encontrado');
+        }
     });
 
     // ---------------------------
-    // Cerrar modal
+    // Cerrar modal personaje
+    // ---------------------------
+    function closeCharacterModal() {
+        if (modalJugador) {
+            modalJugador.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    }
+
+    closeJugador?.addEventListener("click", closeCharacterModal);
+
+    // Click fuera del modal para cerrarlo
+    modalJugador?.addEventListener("click", (e) => {
+        if (e.target === modalJugador) {
+            closeCharacterModal();
+        }
+    });
+
+    // ---------------------------
+    // Carrusel
+    // ---------------------------
+    function updateCarousel() {
+        if (!track || !items.length) return;
+
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        items.forEach((item, i) => {
+            item.classList.toggle("active", i === currentIndex);
+        });
+        indicators.forEach((dot, i) => {
+            dot.classList.toggle("active", i === currentIndex);
+        });
+    }
+
+    nextBtn?.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % items.length;
+        updateCarousel();
+    });
+
+    prevBtn?.addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        updateCarousel();
+    });
+
+    // ---------------------------
+    // Aceptar personaje → abrir modal niveles
+    // ---------------------------
+    window.acceptCharacter = function () {
+        personajeSeleccionado = items[currentIndex]?.dataset.characterId;
+        console.log("Personaje seleccionado:", personajeSeleccionado);
+
+        // Cerrar modal jugador
+        closeCharacterModal();
+
+        // Abrir modal nivel después de elegir personaje
+        if (modalNivel) {
+            modalNivel.style.display = "flex";
+            document.body.style.overflow = "hidden";
+            cargarNiveles();
+        }
+    };
+
+    // Hacer la función global también para el HTML
+    window.closeCharacterModal = closeCharacterModal;
+
+    // =========================================================
+    // MODAL NIVELES
+    // =========================================================
+
+    // ---------------------------
+    // Cerrar modal niveles
     // ---------------------------
     [closeBtn, cancelBtn].forEach(btn => {
         btn?.addEventListener('click', () => {
-            modal.style.display = 'none';
+            modalNivel.style.display = 'none';
             document.body.style.overflow = 'auto';
         });
     });
 
-    modal?.addEventListener('click', e => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
+    modalNivel?.addEventListener('click', e => {
+        if (e.target === modalNivel) {
+            modalNivel.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
     });
@@ -45,12 +175,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Por favor selecciona un nivel');
                 return;
             }
-
-            // Obtener número del nivel
+            const gameId = window.gameId || 'unknown';
             const numeroNivel = nivelSeleccionado.lvlNumber || nivelSeleccionado.id;
-
-            // Redirigir a la ruta correcta de Symfony
-            const urlDestino = `/juegoweb/public/index.php/nivelarray/${numeroNivel}`;
+            const urlDestino = `/juegoweb/public/index.php/nivelarray/${numeroNivel}/${personajeSeleccionado}/${gameId}`;
 
             console.log('Nivel seleccionado:', numeroNivel);
             console.log('Redirigiendo a:', urlDestino);
@@ -99,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             nivelSeleccionado = level;
                             actualizarInfoNivel(level);
 
-                            // Habilitar botón iniciar
                             if (iniciarBtn) {
                                 iniciarBtn.disabled = false;
                                 iniciarBtn.textContent = 'INICIAR NIVEL';
@@ -107,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
 
-                    // Seleccionar primer nivel automáticamente
                     const primer = nivelesGrid.querySelector('.nivel-square');
                     if (primer) primer.click();
 
@@ -167,5 +292,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p><strong>Puntos obtenidos:</strong> -</p>
                 `;
             });
+    }
+
+    // Inicializar carrusel al cargar
+    if (items.length > 0) {
+        updateCarousel();
     }
 });

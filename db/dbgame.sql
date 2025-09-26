@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-09-2025 a las 00:55:19
+-- Tiempo de generación: 22-09-2025 a las 07:45:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -160,7 +160,6 @@ CREATE TABLE `messenger_messages` (
 
 CREATE TABLE `player` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `games_id` int(11) DEFAULT NULL,
   `nombre` varchar(50) NOT NULL,
   `nivel` int(11) NOT NULL,
@@ -168,16 +167,19 @@ CREATE TABLE `player` (
   `vida_actual` int(11) NOT NULL,
   `vida_maxima` int(11) NOT NULL,
   `fecha_creacion` datetime NOT NULL,
-  `ultima_conexion` datetime NOT NULL
+  `ultima_conexion` datetime NOT NULL,
+  `speed` double DEFAULT NULL,
+  `jump_speed` double DEFAULT NULL,
+  `name_sprite` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `player`
 --
 
-INSERT INTO `player` (`id`, `user_id`, `games_id`, `nombre`, `nivel`, `experiencia`, `vida_actual`, `vida_maxima`, `fecha_creacion`, `ultima_conexion`) VALUES
-(1, 4, 1, 'Jugador chico', 1, 1, 10, 10, '2020-01-01 00:00:00', '2020-01-01 00:00:00'),
-(2, 4, 1, 'Jugador chica', 1, 1, 10, 10, '2025-09-12 10:00:00', '2025-09-12 02:04:00');
+INSERT INTO `player` (`id`, `games_id`, `nombre`, `nivel`, `experiencia`, `vida_actual`, `vida_maxima`, `fecha_creacion`, `ultima_conexion`, `speed`, `jump_speed`, `name_sprite`) VALUES
+(3, 1, 'El Chico', 1, 1, 8, 8, '2025-09-20 00:00:00', '2025-09-20 00:00:00', 200, 1300, 'player_chico'),
+(4, 1, 'La Chica', 1, 1, 3, 3, '2025-09-21 00:00:00', '2025-09-21 00:00:00', 700, 1000, 'player_chica');
 
 -- --------------------------------------------------------
 
@@ -216,13 +218,6 @@ CREATE TABLE `score` (
   `game_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `score`
---
-
-INSERT INTO `score` (`id`, `player_id`, `saves_id`, `puntos`, `fecha_guardado`, `game_id`) VALUES
-(2, 1, 2, 150, '2020-01-01 00:00:00', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -257,7 +252,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `roles`, `password`, `email`) VALUES
-(4, 'garca', '[]', '$2y$13$uG53vknlB4UpavjD4O3ZyelUmnaYCO1SAA/.Xa5aq8l7uTAEhm/vW', 'facundosnake@gmail.com');
+(8, 'gordo', '[]', '$2y$13$T3.YvA2u9aRAVm.bT0Nb1OkDOLGqVgO2oDoCNYR44wAfBbSHzfLRG', 'garca@gmail.com'),
+(10, 'Facundo', '[]', '$2y$13$gbCj8Zp9e0ru4eqMfJWNHu1fG9Kvid2b8U5svl9KClrxxrcSMolii', 'facundosnake@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -271,13 +267,6 @@ CREATE TABLE `user_item` (
   `item_id` int(11) DEFAULT NULL,
   `cantidad` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `user_item`
---
-
-INSERT INTO `user_item` (`id`, `player_id`, `item_id`, `cantidad`) VALUES
-(1, 1, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -300,7 +289,27 @@ CREATE TABLE `user_level` (
 --
 
 INSERT INTO `user_level` (`id`, `player_id`, `level_id`, `completado`, `tiempo_usado`, `puntos_obtenidos`, `game_id`) VALUES
-(3, 1, 1, 1, 15, 55, 1);
+(4, 3, 1, 1, 45, 65, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `user_player`
+--
+
+CREATE TABLE `user_player` (
+  `user_id` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `user_player`
+--
+
+INSERT INTO `user_player` (`user_id`, `player_id`, `id`) VALUES
+(10, 3, 1),
+(10, 4, 2);
 
 --
 -- Índices para tablas volcadas
@@ -354,7 +363,6 @@ ALTER TABLE `messenger_messages`
 --
 ALTER TABLE `player`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `IDX_98197A65A76ED395` (`user_id`),
   ADD KEY `IDX_98197A6597FFC673` (`games_id`);
 
 --
@@ -408,6 +416,14 @@ ALTER TABLE `user_level`
   ADD KEY `IDX_7828374B99E6F5DF` (`player_id`);
 
 --
+-- Indices de la tabla `user_player`
+--
+ALTER TABLE `user_player`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_FD4B6158A76ED395` (`user_id`),
+  ADD KEY `IDX_FD4B615899E6F5DF` (`player_id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -451,7 +467,7 @@ ALTER TABLE `messenger_messages`
 -- AUTO_INCREMENT de la tabla `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `saves`
@@ -475,7 +491,7 @@ ALTER TABLE `sprite`
 -- AUTO_INCREMENT de la tabla `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `user_item`
@@ -487,7 +503,13 @@ ALTER TABLE `user_item`
 -- AUTO_INCREMENT de la tabla `user_level`
 --
 ALTER TABLE `user_level`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `user_player`
+--
+ALTER TABLE `user_player`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -516,8 +538,7 @@ ALTER TABLE `level_enemies`
 -- Filtros para la tabla `player`
 --
 ALTER TABLE `player`
-  ADD CONSTRAINT `FK_98197A6597FFC673` FOREIGN KEY (`games_id`) REFERENCES `game` (`id`),
-  ADD CONSTRAINT `FK_98197A65A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `FK_98197A6597FFC673` FOREIGN KEY (`games_id`) REFERENCES `game` (`id`);
 
 --
 -- Filtros para la tabla `saves`
@@ -555,6 +576,13 @@ ALTER TABLE `user_level`
   ADD CONSTRAINT `FK_7828374B5FB14BA7` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`),
   ADD CONSTRAINT `FK_7828374B99E6F5DF` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
   ADD CONSTRAINT `FK_7828374BE48FD905` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`);
+
+--
+-- Filtros para la tabla `user_player`
+--
+ALTER TABLE `user_player`
+  ADD CONSTRAINT `FK_FD4B615899E6F5DF` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
+  ADD CONSTRAINT `FK_FD4B6158A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

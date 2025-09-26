@@ -6,15 +6,14 @@ export default class GameOverScene extends Phaser.Scene {
     init(data) {
         this.puntaje = data.puntaje || 0;
         this.tiempo = data.tiempo || 0;
+        this.level = data.level || 'Level1'; // Nivel a reiniciar
     }
 
     preload() {
-        // Crear texturas pixel art programáticamente si no tienes sprites
         this.createPixelTextures();
     }
 
     createPixelTextures() {
-        // Crear patrón de scanlines para efecto CRT
         const scanlineTexture = this.add.graphics();
         scanlineTexture.fillStyle(0x000000, 0.3);
         for (let i = 0; i < this.scale.height; i += 4) {
@@ -23,7 +22,6 @@ export default class GameOverScene extends Phaser.Scene {
         scanlineTexture.generateTexture('scanlines', this.scale.width, this.scale.height);
         scanlineTexture.destroy();
 
-        // Crear patrón de píxeles para el fondo
         const pixelBg = this.add.graphics();
         const colors = [0x1a1a2e, 0x16213e, 0x0f3460];
         for (let x = 0; x < 32; x++) {
@@ -36,42 +34,30 @@ export default class GameOverScene extends Phaser.Scene {
         pixelBg.generateTexture('pixelBg', 512, 384);
         pixelBg.destroy();
 
-        // Crear botones pixel art
         this.createPixelButton('btnTexture', 200, 50, 0x4a90e2, 0x2c5282);
         this.createPixelButton('btnTextureHover', 200, 50, 0x5ba0f2, 0x4a90e2);
     }
 
     createPixelButton(key, width, height, fillColor, borderColor) {
         const btn = this.add.graphics();
-        
-        // Borde exterior
         btn.fillStyle(borderColor);
         btn.fillRect(0, 0, width, height);
-        
-        // Interior del botón
         btn.fillStyle(fillColor);
         btn.fillRect(4, 4, width - 8, height - 8);
-        
-        // Highlight superior izquierdo (efecto 3D)
         btn.fillStyle(0xffffff, 0.3);
         btn.fillRect(4, 4, width - 8, 4);
         btn.fillRect(4, 4, 4, height - 8);
-        
-        // Sombra inferior derecha
         btn.fillStyle(0x000000, 0.3);
         btn.fillRect(4, height - 8, width - 8, 4);
         btn.fillRect(width - 8, 4, 4, height - 8);
-        
         btn.generateTexture(key, width, height);
         btn.destroy();
     }
 
     create() {
-        // Fondo pixel art animado
         const bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'pixelBg')
             .setOrigin(0);
-        
-        // Animación sutil del fondo
+
         this.tweens.add({
             targets: bg,
             tilePositionX: 50,
@@ -80,20 +66,15 @@ export default class GameOverScene extends Phaser.Scene {
             ease: 'Linear'
         });
 
-        // Overlay oscuro con efecto de escáner
         const overlay = this.add.rectangle(
             this.scale.width / 2, this.scale.height / 2,
             this.scale.width, this.scale.height,
             0x000000, 0.6
         );
 
-        // Contenedor principal
         const modalBox = this.add.container(this.scale.width / 2, this.scale.height / 2);
-
-        // Marco del modal con estilo pixel art
         const modalFrame = this.createPixelFrame(0, 0, 400, 350);
 
-        // Título con efecto glitch
         const title = this.add.text(0, -120, 'GAME OVER', {
             fontFamily: 'monospace',
             fontSize: '48px',
@@ -101,7 +82,6 @@ export default class GameOverScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Efecto de glitch en el título
         this.time.addEvent({
             delay: 100,
             callback: () => {
@@ -117,9 +97,7 @@ export default class GameOverScene extends Phaser.Scene {
             loop: true
         });
 
-        // Estadísticas con estilo retro
         const statsContainer = this.add.container(0, -20);
-        
         const statsTitle = this.add.text(0, -30, '═══ FINAL STATS ═══', {
             fontFamily: 'monospace',
             fontSize: '20px',
@@ -140,37 +118,31 @@ export default class GameOverScene extends Phaser.Scene {
 
         statsContainer.add([statsTitle, puntajeText, tiempoText]);
 
-        // Botones con estilo pixel art
-        const btnReiniciar = this.createRetroButton(0, 90, '↻ RESTART LEVEL', '#00ff41');
+        const btnReiniciar = this.createRetroButton(0, 90, '↻ RESTART LEVEL (R)', '#00ff41');
         const btnMenu = this.createRetroButton(0, 150, '⌂ MAIN MENU', '#ffaa00');
 
-        // Eventos de botones
-        btnReiniciar.on('pointerdown', () => {
-            this.playSelectSound();
-            this.scene.stop();
-            this.scene.stop('Level1');
-            this.scene.start('Level1');
-        });
+        // Tecla R para reiniciar
+        this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        this.keyR.on('down', () => this.restartLevel());
 
+        // Botón para reiniciar
+        btnReiniciar.on('pointerdown', () => this.restartLevel());
+
+        // Botón para ir al menú
         btnMenu.on('pointerdown', () => {
             this.playSelectSound();
             this.scene.stop();
-            this.scene.stop('Level1');
-            // Redirigir al menú principal
-             window.location.href = MENU_URL;
-        });
+        window.location.href = MENU_URL;
+    });
 
-        // Agregar elementos al contenedor
         modalBox.add([modalFrame, title, statsContainer, btnReiniciar, btnMenu]);
 
-        // Scanlines para efecto CRT
         const scanlines = this.add.image(this.scale.width / 2, this.scale.height / 2, 'scanlines')
             .setAlpha(0.5);
 
-        // Animación de aparición con efecto retro
         modalBox.setScale(0);
         modalBox.setAlpha(0);
-        
+
         this.tweens.add({
             targets: modalBox,
             scale: 1,
@@ -179,7 +151,6 @@ export default class GameOverScene extends Phaser.Scene {
             ease: 'Bounce.Out'
         });
 
-        // Efecto de parpadeo en los bordes
         this.tweens.add({
             targets: modalFrame,
             alpha: 0.8,
@@ -189,87 +160,60 @@ export default class GameOverScene extends Phaser.Scene {
             ease: 'Sine.InOut'
         });
 
-        // Partículas de fondo
         this.createPixelParticles();
     }
 
+    // Nuevo método para reiniciar nivel
+    restartLevel() {
+        this.playSelectSound();
+        this.scene.stop();
+        this.scene.start(this.level);
+    }
+
+
     createPixelFrame(x, y, width, height) {
         const frame = this.add.graphics();
-        
-        // Fondo del marco
         frame.fillStyle(0x0a0a0a, 0.9);
         frame.fillRect(x - width/2, y - height/2, width, height);
-        
-        // Bordes con estilo pixel
+
         const borderWidth = 6;
         frame.fillStyle(0x00ff41);
-        
-        // Borde superior
-        frame.fillRect(x - width/2, y - height/2, width, borderWidth);
-        // Borde inferior
-        frame.fillRect(x - width/2, y + height/2 - borderWidth, width, borderWidth);
-        // Borde izquierdo
-        frame.fillRect(x - width/2, y - height/2, borderWidth, height);
-        // Borde derecho
-        frame.fillRect(x + width/2 - borderWidth, y - height/2, borderWidth, height);
-        
-        // Esquinas decorativas
+        frame.fillRect(x - width / 2, y - height / 2, width, borderWidth); // top
+        frame.fillRect(x - width / 2, y + height / 2 - borderWidth, width, borderWidth); // bottom
+        frame.fillRect(x - width / 2, y - height / 2, borderWidth, height); // left
+        frame.fillRect(x + width / 2 - borderWidth, y - height / 2, borderWidth, height); // right
+
         const cornerSize = 20;
         frame.fillStyle(0xffaa00);
-        
-        // Esquina superior izquierda
-        frame.fillRect(x - width/2, y - height/2, cornerSize, cornerSize);
-        // Esquina superior derecha
-        frame.fillRect(x + width/2 - cornerSize, y - height/2, cornerSize, cornerSize);
-        // Esquina inferior izquierda
-        frame.fillRect(x - width/2, y + height/2 - cornerSize, cornerSize, cornerSize);
-        // Esquina inferior derecha
-        frame.fillRect(x + width/2 - cornerSize, y + height/2 - cornerSize, cornerSize, cornerSize);
+        frame.fillRect(x - width / 2, y - height / 2, cornerSize, cornerSize); // top-left
+        frame.fillRect(x + width / 2 - cornerSize, y - height / 2, cornerSize, cornerSize); // top-right
+        frame.fillRect(x - width / 2, y + height / 2 - cornerSize, cornerSize, cornerSize); // bottom-left
+        frame.fillRect(x + width / 2 - cornerSize, y + height / 2 - cornerSize, cornerSize, cornerSize); // bottom-right
 
-
-        // Eventos de teclado (al apretar enter)
+        // Enter key reinicia el nivel actual
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.enterKey.on('down', () => {
             this.playSelectSound();
             this.scene.stop();
-            this.scene.stop('Level1');
-            this.scene.start('Level1');
+            this.scene.start(this.level);
         });
+
         return frame;
     }
 
     createRetroButton(x, y, text, color) {
         const button = this.add.container(x, y);
-        
         const bg = this.add.rectangle(0, 0, 250, 35, 0x1a1a1a)
             .setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(color).color);
-        
-        const label = this.add.text(0, 0, text, {
-            fontFamily: 'monospace',
-            fontSize: '18px',
-            color: color
-        }).setOrigin(0.5);
-        
+        const label = this.add.text(0, 0, text, { fontFamily: 'monospace', fontSize: '18px', color }).setOrigin(0.5);
         button.add([bg, label]);
         button.setSize(250, 35);
         button.setInteractive({ useHandCursor: true });
-        
-        // Efectos hover
-        button.on('pointerover', () => {
-            bg.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, 0.2);
-            label.setColor('#ffffff');
-        });
-        
-        button.on('pointerout', () => {
-            bg.setFillStyle(0x1a1a1a);
-            label.setColor(color);
-        });
-        
-        button.on('pointerdown', () => {
-            button.setScale(0.95);
-            this.time.delayedCall(100, () => button.setScale(1));
-        });
-        
+
+        button.on('pointerover', () => { bg.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, 0.2); label.setColor('#ffffff'); });
+        button.on('pointerout', () => { bg.setFillStyle(0x1a1a1a); label.setColor(color); });
+        button.on('pointerdown', () => { button.setScale(0.95); this.time.delayedCall(100, () => button.setScale(1)); });
+
         return button;
     }
 
@@ -285,27 +229,13 @@ export default class GameOverScene extends Phaser.Scene {
                     Phaser.Math.Between(0, 100)
                 )
             ).setAlpha(0.6);
-            
-            this.tweens.add({
-                targets: particle,
-                y: particle.y - this.scale.height - 50,
-                duration: Phaser.Math.Between(5000, 10000),
-                repeat: -1,
-                delay: Phaser.Math.Between(0, 5000)
-            });
-            
-            this.tweens.add({
-                targets: particle,
-                alpha: 0.2,
-                duration: 2000,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.InOut'
-            });
+
+            this.tweens.add({ targets: particle, y: particle.y - this.scale.height - 50, duration: Phaser.Math.Between(5000, 10000), repeat: -1, delay: Phaser.Math.Between(0, 5000) });
+            this.tweens.add({ targets: particle, alpha: 0.2, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
         }
     }
 
     playSelectSound() {
-        //aca es para agregar sonidos
+        // Agregar sonido si se desea
     }
 }

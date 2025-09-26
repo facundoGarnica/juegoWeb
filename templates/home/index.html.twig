@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}CodeGames{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
 {% endblock %}
 {% block body %}
 <a href="{{ path('app_formularios') }}">
@@ -39,7 +40,7 @@
         <p>Bienvenido, {{ app.user.username }}!</p>
         <a href="{{ path('app_logout') }}">Cerrar sesión</a>
     {% else %}
-        <p>Bienvenido, invitado!</p>
+        <p>Iniciar sesión o registrarses</p>
         <a href="#" id="openModal">Iniciar sesión</a>
         <a href="#" id="openRegisterModal">Registrarse</a>
     {% endif %}
@@ -68,7 +69,8 @@
 </div>
 
 <script>
-    const userId = {{ app.user ? app.user.id : 'null' }};
+    const userId = {{ app.user ? app.user.id : null }};
+    console.log('userId definido como:', userId, 'tipo:', typeof userId);
 </script>
 
 <section id="topMejores">

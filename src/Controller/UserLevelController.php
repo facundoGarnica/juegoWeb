@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\UserLevel;
 use App\Entity\Player;
 use App\Entity\Level;
+use App\Entity\Game;
 use App\Form\UserLevel1Type;
 use App\Repository\UserLevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,60 @@ class UserLevelController extends AbstractController
             'user_levels' => $userLevelRepository->findAll(),
         ]);
     }
+    
+    #[Route('/save/{playerId}', name: 'app_userlevel_save', methods: ['POST'])]
+    public function saveUserLevel(
+        int $playerId,
+        EntityManagerInterface $entityManager
+    ): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $player = $entityManager->getRepository(Player::class)->find($playerId);
+        if (!$player) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jugador no encontrado'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $game = $entityManager->getRepository(Game::class)->find(1); // ID fijo 1
+        if (!$game) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Juego no encontrado'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        // 🔹 CORREGIDO: Crear nuevo UserLevel con User
+        $userLevel = new UserLevel();
+        $userLevel->setPlayer($player)
+                ->setUser($user) // 🔹 Asignar el usuario autenticado
+                ->setGame($game)
+                ->setCompletado(false)     // por defecto
+                ->setTiempoUsado(0)
+                ->setPuntosObtenidos(0);
+
+        $entityManager->persist($userLevel);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'userLevelId' => $userLevel->getId(),
+                'playerId' => $player->getId(),
+                'gameId' => $game->getId(),
+                'userId' => $user->getId() // 🔹 Incluir ID del usuario
+            ]
+        ]);
+    }
 
     #[Route('/new', name: 'app_user_level_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -33,6 +88,11 @@ class UserLevelController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // 🔹 Si no se asigna usuario en el form, usar el usuario autenticado
+            if (!$userLevel->getUser()) {
+                $userLevel->setUser($this->getUser());
+            }
+            
             $entityManager->persist($userLevel);
             $entityManager->flush();
 
@@ -45,10 +105,17 @@ class UserLevelController extends AbstractController
         ]);
     }
 
-    // ✅ IMPORTANTE: Rutas específicas ANTES de las rutas con parámetros
     #[Route('/save', name: 'app_user_level_save', methods: ['POST'])]
     public function save(Request $request, UserLevelRepository $userLevelRepository, EntityManagerInterface $entityManager): JsonResponse
     {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['playerId'], $data['levelId'], $data['puntosObtenidos'], $data['tiempoUsado'], $data['completado'])) {
@@ -64,8 +131,12 @@ class UserLevelController extends AbstractController
         $tiempo = (int) $data['tiempoUsado'];
         $completado = (bool) $data['completado'];
 
-        // Buscar si ya existe un registro para este jugador y nivel
-        $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
+        // 🔹 CORREGIDO: Buscar UserLevel por usuario autenticado, player y level
+        $userLevel = $userLevelRepository->findOneBy([
+            'user' => $user,
+            'player' => $playerId,
+            'level' => $levelId
+        ]);
 
         if ($userLevel) {
             // Si existe, solo actualizar si el nuevo puntaje es mayor
@@ -77,7 +148,6 @@ class UserLevelController extends AbstractController
             }
         } else {
             // Si no existe, crear uno nuevo
-            $userLevel = new UserLevel();
             $player = $entityManager->getRepository(Player::class)->find($playerId);
             $level = $entityManager->getRepository(Level::class)->find($levelId);
 
@@ -88,8 +158,10 @@ class UserLevelController extends AbstractController
                 ], Response::HTTP_BAD_REQUEST);
             }
 
+            $userLevel = new UserLevel();
             $userLevel->setPlayer($player)
                     ->setLevel($level)
+                    ->setUser($user) // 🔹 Asignar el usuario autenticado
                     ->setPuntosObtenidos($puntos)
                     ->setTiempoUsado($tiempo)
                     ->setCompletado($completado);
@@ -104,7 +176,9 @@ class UserLevelController extends AbstractController
                 'id' => $userLevel->getId(),
                 'puntosObtenidos' => $userLevel->getPuntosObtenidos(),
                 'tiempoUsado' => $userLevel->getTiempoUsado(),
-                'completado' => $userLevel->isCompletado()
+                'completado' => $userLevel->isCompletado(),
+                'userId' => $userLevel->getUser()->getId(),
+                'username' => $userLevel->getUser()->getUsername()
             ]
         ]);
     }
@@ -115,7 +189,20 @@ class UserLevelController extends AbstractController
         int $levelId,
         UserLevelRepository $userLevelRepository
     ): JsonResponse {
-        $userLevel = $userLevelRepository->findPlayerLevelByUserAndLevel($playerId, $levelId);
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        // 🔹 CORREGIDO: Buscar por usuario autenticado, player y level
+        $userLevel = $userLevelRepository->findOneBy([
+            'user' => $user,
+            'player' => $playerId,
+            'level' => $levelId
+        ]);
 
         if (!$userLevel) {
             return $this->json([
@@ -133,10 +220,45 @@ class UserLevelController extends AbstractController
                 'tiempo_usado' => $userLevel->getTiempoUsado(),
                 'puntos_obtenidos' => $userLevel->getPuntosObtenidos(),
                 'playerId' => $userLevel->getPlayer()->getId(),
-                'playerNombre' => $userLevel->getPlayer()->getUser()->getUsername(),
+                'playerNombre' => $userLevel->getPlayer()->getNombre(),
                 'levelId' => $userLevel->getLevel()->getId(),
-                'levelNombre' => $userLevel->getLevel()->getNombre()
+                'levelNombre' => $userLevel->getLevel()->getNombre(),
+                'userId' => $userLevel->getUser()->getId(), // 🔹 Usuario específico
+                'username' => $userLevel->getUser()->getUsername() // 🔹 Username específico
             ]
+        ]);
+    }
+
+    // 🔹 NUEVO ENDPOINT: Obtener UserLevels del usuario autenticado
+    #[Route('/my-progress', name: 'app_user_level_my_progress', methods: ['GET'])]
+    public function getMyProgress(UserLevelRepository $userLevelRepository): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $userLevels = $userLevelRepository->findBy(['user' => $user]);
+
+        $data = [];
+        foreach ($userLevels as $ul) {
+            $data[] = [
+                'id' => $ul->getId(),
+                'completado' => $ul->isCompletado(),
+                'tiempo_usado' => $ul->getTiempoUsado(),
+                'puntos_obtenidos' => $ul->getPuntosObtenidos(),
+                'player' => $ul->getPlayer()->getNombre(),
+                'level' => $ul->getLevel()->getNombre(),
+                'game' => $ul->getGame() ? $ul->getGame()->getNombre() : null
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'data' => $data
         ]);
     }
 

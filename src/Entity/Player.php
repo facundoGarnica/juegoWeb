@@ -31,18 +31,18 @@ class Player
     #[ORM\Column]
     private ?int $vida_maxima = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $speed = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $jumpSpeed = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $fecha_creacion = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $ultima_conexion = null;
 
-    #[ORM\ManyToOne(inversedBy: 'players')]
-    private ?User $user = null;
-
-    
-
-    // 🔹 Corregido: usar la columna games_id de la DB
     #[ORM\ManyToOne(inversedBy: 'players')]
     #[ORM\JoinColumn(name: 'games_id', referencedColumnName: 'id')]
     private ?Game $game = null;
@@ -52,11 +52,18 @@ class Player
 
     #[ORM\OneToMany(mappedBy: 'player', targetEntity: UserLevel::class, cascade: ['persist', 'remove'])]
     private Collection $userLevels;
+
+    #[ORM\OneToMany(targetEntity: UserPlayer::class, mappedBy: 'player')]
+    private Collection $userPlayers;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $name_sprite = null;
     
     public function __construct()
     {
         $this->sprites = new ArrayCollection();
         $this->userLevels = new ArrayCollection();
+        $this->userPlayers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,6 +79,28 @@ class Player
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
+        return $this;
+    }
+
+    public function getSpeed(): ?float
+    {
+        return $this->speed;
+    }
+
+    public function setSpeed(?float $speed): static
+    {
+        $this->speed = $speed;
+        return $this;
+    }
+
+    public function getJumpSpeed(): ?float
+    {
+        return $this->jumpSpeed;
+    }
+
+    public function setJumpSpeed(?float $jumpSpeed): static
+    {
+        $this->jumpSpeed = $jumpSpeed;
         return $this;
     }
 
@@ -140,18 +169,7 @@ class Player
         $this->ultima_conexion = $ultima_conexion;
         return $this;
     }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
-    }
-
+    
     public function getGame(): ?Game
     {
         return $this->game;
@@ -196,4 +214,48 @@ class Player
     {
         return (string) $this->nombre;
     }
+
+    /**
+     * @return Collection<int, UserPlayer>
+     */
+    public function getUserPlayers(): Collection
+    {
+        return $this->userPlayers;
+    }
+
+    public function addUserPlayer(UserPlayer $userPlayer): static
+    {
+        if (!$this->userPlayers->contains($userPlayer)) {
+            $this->userPlayers->add($userPlayer);
+            $userPlayer->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPlayer(UserPlayer $userPlayer): static
+    {
+        if ($this->userPlayers->removeElement($userPlayer)) {
+            // set the owning side to null (unless already changed)
+            if ($userPlayer->getPlayer() === $this) {
+                $userPlayer->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNameSprite(): ?string
+    {
+        return $this->name_sprite;
+    }
+
+    public function setNameSprite(?string $name_sprite): static
+    {
+        $this->name_sprite = $name_sprite;
+
+        return $this;
+    }
+
+
 }

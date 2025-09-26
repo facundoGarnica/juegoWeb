@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType; // <- para speed y jumpSpeed
 
 class PlayerType extends AbstractType
 {
@@ -21,19 +22,24 @@ class PlayerType extends AbstractType
             ->add('experiencia')
             ->add('vida_actual')
             ->add('vida_maxima')
+            ->add('speed', NumberType::class, [
+                'required' => false,
+                'scale' => 2, // permite decimales si quieres
+            ])
+            ->add('jumpSpeed', NumberType::class, [
+                'required' => false,
+                'scale' => 2,
+            ])
+            ->add('name_sprite')
             ->add('fecha_creacion', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
             ->add('ultima_conexion', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'username', // o el campo que quieras mostrar
-            ])
             ->add('game', EntityType::class, [
                 'class' => Game::class,
-                'choice_label' => 'nombre', // o el campo que quieras mostrar
+                'choice_label' => 'nombre',
             ])
         ;
     }

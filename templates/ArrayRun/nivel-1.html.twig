@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}ArrayRun Phaser Nivel 1{% endblock %}
+{% block title %}ArrayRun Nivel 1{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/ArrayRun-lvl1.css') }}">
 {% endblock %}
@@ -7,29 +7,32 @@
     <div id="game-container" style="width: 100%; height: 100vh; overflow: hidden;"></div>
 {% endblock %}
 {% block javascripts %}
-    <!-- Phaser CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
-    
-    <!-- ✅ VARIABLES GLOBALES PRIMERO (antes del módulo) -->
+
     <script>
         // Variables de rutas y assets
         window.background_path = "{{ asset('images/ArrayRun') }}";
-        const MENU_URL = "{{ path('app_arrayrun') }}";
-        
-        // ✅ Variables del juego (CRÍTICO: antes del módulo)
+        const MENU_URL = "{{ path('app_arrayrun', { userId: user.id }) }}";
+
+        // Variables del juego
         const CURRENT_PLAYER_ID = {{ player.id }};
-        const CURRENT_LEVEL_ID = {{ numero }};
+        window.ACTUAL_PLAYER_ID = {{ player.id }};
+        window.CURRENT_LEVEL_ID = {{ numero }};
+        window.CURRENT_GAME_ID = {{ gameId }};
         const SAVE_LEVEL_PATH = "{{ path('app_user_level_save') }}";
-        
-        // ✅ Debug para verificar que se generan correctamente
-        console.log('=== VARIABLES GLOBALES ===');
-        console.log('CURRENT_PLAYER_ID:', CURRENT_PLAYER_ID);
-        console.log('CURRENT_LEVEL_ID:', CURRENT_LEVEL_ID);
-        console.log('SAVE_LEVEL_PATH:', SAVE_LEVEL_PATH);
-        console.log('MENU_URL:', MENU_URL);
-        console.log('===========================');
+        window.CURRENT_PLAYER_SPRITE = "{{ player.nameSprite }}";
+        window.levelsByGameUrl = "{{ path('api_levels_by_game', {'gameId': gameId}) }}";
+
+        // Datos del player
+        window.CURRENT_PLAYER = {
+            id: {{ player.id }},
+            nombre: "{{ player.nombre }}",
+            vida_actual: {{ player.vidaActual }},
+            vida_maxima: {{ player.vidaMaxima }},
+            speed: {{ player.speed ?? 0 }},
+            jumpSpeed: {{ player.jumpSpeed ?? 0 }},
+        };
     </script>
-   
-    <!-- ✅ Script principal del juego DESPUÉS de las variables -->
+
     <script type="module" src="{{ asset('js/ArrayRunScript/game.js') }}"></script>
 {% endblock %}

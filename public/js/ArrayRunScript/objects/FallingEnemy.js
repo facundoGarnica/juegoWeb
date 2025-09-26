@@ -2,7 +2,10 @@ export default class FallingEnemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, player, config = {}) {
         const startX = Phaser.Math.Between(50, scene.scale.width - 50);
         const startY = -50;
-        super(scene, startX, startY, 'enemy_falling');
+
+        // Usar spriteKey pasado en config o 'enemy_falling' por defecto
+        const key = config.spriteKey || 'enemy_falling';
+        super(scene, startX, startY, key);
 
         scene.add.existing(this);
         scene.physics.add.existing(this);

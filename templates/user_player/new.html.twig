@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New UserPlayer{% endblock %}
+
+{% block body %}
+    <h1>Create new UserPlayer</h1>
+
+    {{ include('user_player/_form.html.twig') }}
+
+    <a href="{{ path('app_user_player_index') }}">back to list</a>
+{% endblock %}

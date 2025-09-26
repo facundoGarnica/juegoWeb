@@ -10,6 +10,7 @@ export default class GameCompleteScene extends Phaser.Scene {
         this.totalMonedas = data.totalMonedas || 0;
         this.vidaActual = data.vidaActual || 0;
         this.vidaTotal = data.vidaTotal || 0;
+        this.level = data.level || 'Level1';
     }
 
     preload() {
@@ -17,7 +18,6 @@ export default class GameCompleteScene extends Phaser.Scene {
     }
 
     createPixelTextures() {
-        // Fondo oscuro con "estrellas" aleatorias
         const pixelBg = this.add.graphics();
         const colors = [0x0a1a0a, 0x0d2a0d, 0x0f3a0f];
         for (let x = 0; x < 32; x++) {
@@ -30,7 +30,6 @@ export default class GameCompleteScene extends Phaser.Scene {
         pixelBg.generateTexture('pixelBg', 512, 384);
         pixelBg.destroy();
 
-        // Scanlines
         const scanlineTexture = this.add.graphics();
         scanlineTexture.fillStyle(0x000000, 0.3);
         for (let i = 0; i < this.scale.height; i += 4) {
@@ -41,7 +40,6 @@ export default class GameCompleteScene extends Phaser.Scene {
     }
 
     create() {
-        // Fondo con efecto estrellas
         const bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'pixelBg').setOrigin(0);
         this.tweens.add({
             targets: bg,
@@ -51,21 +49,13 @@ export default class GameCompleteScene extends Phaser.Scene {
             ease: 'Linear'
         });
 
-        // Overlay oscuro
-        const overlay = this.add.rectangle(
-            this.scale.width / 2, this.scale.height / 2,
-            this.scale.width, this.scale.height,
-            0x000000, 0.5
-        );
+        this.add.rectangle(this.scale.width / 2, this.scale.height / 2, this.scale.width, this.scale.height, 0x000000, 0.5);
 
-        // Modal container
+        // Contenedor principal
         const modalBox = this.add.container(this.scale.width / 2, this.scale.height / 2);
 
-        // Frame
-        const modalFrame = this.createPixelFrame(0, 0, 400, 350);
-
-        // Title
-        const title = this.add.text(0, -120, 'LEVEL COMPLETE!', {
+        // Título principal
+        const title = this.add.text(0, -150, 'LEVEL COMPLETE!', {
             fontFamily: 'monospace',
             fontSize: '40px',
             color: '#00ff41',
@@ -73,7 +63,7 @@ export default class GameCompleteScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Stats
-        const statsContainer = this.add.container(0, -20);
+        const statsContainer = this.add.container(0, -50);
         const statsTitle = this.add.text(0, -40, '═══ FINAL STATS ═══', {
             fontFamily: 'monospace',
             fontSize: '20px',
@@ -106,27 +96,22 @@ export default class GameCompleteScene extends Phaser.Scene {
 
         statsContainer.add([statsTitle, puntajeText, tiempoText, monedasText, vidaText]);
 
-        // Buttons
-        const btnReiniciar = this.createRetroButton(0, 130, '↻ RESTART LEVEL', '#00ff41');
-        const btnMenu = this.createRetroButton(0, 190, '⌂ MAIN MENU', '#ffaa00');
+        // Botones
+        const spacing = 40;
+        const baseY = 120; // desde el final de stats
 
-        btnReiniciar.on('pointerdown', async () => {
-            await this.saveScoreToServer();
-            this.scene.stop();
-            this.scene.stop('Level1');
-            this.scene.start('Level1');
-        });
+        const btnNextLevel = this.createRetroButton(0, baseY, '→ NEXT LEVEL', '#00aaff');
+        const btnReiniciar = this.createRetroButton(0, baseY + spacing, '↻ RESTART LEVEL (R)', '#00ff41');
+        const btnMenu = this.createRetroButton(0, baseY + spacing * 2, '⌂ MAIN MENU', '#ffaa00');
 
-        btnMenu.on('pointerdown', async () => {
-            await this.saveScoreToServer();
-            this.scene.stop();
-            this.scene.stop('Level1');
-            window.location.href = MENU_URL;
-        });
+        // Frame dinámico según contenido
+        const totalHeight = baseY + spacing * 3 + 230;
+        const modalFrame = this.createPixelFrame(0, 0, 400, totalHeight);
 
-        modalBox.add([modalFrame, title, statsContainer, btnReiniciar, btnMenu]);
+        modalBox.add([modalFrame, title, statsContainer, btnNextLevel, btnReiniciar, btnMenu]);
 
-        // Entry animation
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'scanlines').setAlpha(0.5);
+
         modalBox.setScale(0);
         modalBox.setAlpha(0);
         this.tweens.add({
@@ -137,8 +122,48 @@ export default class GameCompleteScene extends Phaser.Scene {
             ease: 'Bounce.Out'
         });
 
-        // Scanlines
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'scanlines').setAlpha(0.5);
+        // Botón NEXT LEVEL oculto hasta comprobar existencia
+        btnNextLevel.setVisible(false);
+        (async () => {
+            try {
+                const response = await fetch(levelsByGameUrl);
+                if (!response.ok) throw new Error('Error al traer niveles');
+                const data = await response.json();
+                const numeroNivel = window.CURRENT_LEVEL_ID;
+                const siguienteNivel = data.levels.find(l => l.lvlNumber === numeroNivel + 1);
+                if (siguienteNivel) {
+                    btnNextLevel.setVisible(true);
+                    btnNextLevel.on('pointerdown', async () => {
+                        await this.saveScoreToServer();
+                        if (this.sound.getAll().length > 0) this.sound.stopAll();
+                        const playerId = window.CURRENT_PLAYER.id;
+                        const CURRENT_GAME_ID = window.CURRENT_GAME_ID;
+                        const personajeSeleccionado = window.CURRENT_PLAYER_SPRITE;
+                        const urlDestino = `/juegoweb/public/index.php/nivelarray/${siguienteNivel.lvlNumber}/${playerId}/${CURRENT_GAME_ID}`;
+                        window.location.href = urlDestino;
+                    });
+                }
+            } catch (err) {
+                console.error('Error comprobando siguiente nivel:', err);
+            }
+        })();
+
+        btnReiniciar.on('pointerdown', () => this.restartLevel());
+        this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        this.keyR.on('down', () => this.restartLevel());
+
+        btnMenu.on('pointerdown', async () => {
+            await this.saveScoreToServer();
+            if (this.sound.getAll().length > 0) this.sound.stopAll();
+            window.location.href = MENU_URL;
+        });
+    }
+
+    async restartLevel() {
+        await this.saveScoreToServer();
+        if (this.sound.getAll().length > 0) this.sound.stopAll();
+        this.scene.stop();
+        this.scene.start(this.level);
     }
 
     createPixelFrame(x, y, width, height) {
@@ -157,44 +182,18 @@ export default class GameCompleteScene extends Phaser.Scene {
         const button = this.add.container(x, y);
         const bg = this.add.rectangle(0, 0, 250, 35, 0x1a1a1a)
             .setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(color).color);
-        const label = this.add.text(0, 0, text, {
-            fontFamily: 'monospace',
-            fontSize: '18px',
-            color: color
-        }).setOrigin(0.5);
+        const label = this.add.text(0, 0, text, { fontFamily: 'monospace', fontSize: '18px', color }).setOrigin(0.5);
         button.add([bg, label]);
         button.setSize(250, 35);
         button.setInteractive({ useHandCursor: true });
-
-        button.on('pointerover', () => {
-            bg.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, 0.2);
-            label.setColor('#ffffff');
-        });
-        button.on('pointerout', () => {
-            bg.setFillStyle(0x1a1a1a);
-            label.setColor(color);
-        });
+        button.on('pointerover', () => { bg.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, 0.2); label.setColor('#ffffff'); });
+        button.on('pointerout', () => { bg.setFillStyle(0x1a1a1a); label.setColor(color); });
         return button;
     }
 
     async saveScoreToServer() {
-        // ✅ DEBUGGING: Verificar variables
-        console.log('=== DEBUG SAVE SCORE ===');
-        console.log('SAVE_LEVEL_PATH:', typeof SAVE_LEVEL_PATH !== 'undefined' ? SAVE_LEVEL_PATH : 'NO DEFINIDO');
-        console.log('CURRENT_PLAYER_ID:', typeof CURRENT_PLAYER_ID !== 'undefined' ? CURRENT_PLAYER_ID : 'NO DEFINIDO');
-        console.log('CURRENT_LEVEL_ID:', typeof CURRENT_LEVEL_ID !== 'undefined' ? CURRENT_LEVEL_ID : 'NO DEFINIDO');
-
-        // ✅ Verificar que las variables estén definidas
-        if (typeof SAVE_LEVEL_PATH === 'undefined') {
-            console.error('ERROR: SAVE_LEVEL_PATH no está definido');
-            return null;
-        }
-        if (typeof CURRENT_PLAYER_ID === 'undefined') {
-            console.error('ERROR: CURRENT_PLAYER_ID no está definido');
-            return null;
-        }
-        if (typeof CURRENT_LEVEL_ID === 'undefined') {
-            console.error('ERROR: CURRENT_LEVEL_ID no está definido');
+        if (typeof SAVE_LEVEL_PATH === 'undefined' || typeof CURRENT_PLAYER_ID === 'undefined' || typeof CURRENT_LEVEL_ID === 'undefined') {
+            console.error('Variables de guardado no definidas correctamente');
             return null;
         }
 
@@ -206,42 +205,19 @@ export default class GameCompleteScene extends Phaser.Scene {
             completado: true
         };
 
-        console.log('Datos a enviar:', data);
-        console.log('URL completa:', SAVE_LEVEL_PATH);
-
         try {
-            console.log('Enviando petición...');
-
             const response = await fetch(SAVE_LEVEL_PATH, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(data)
             });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`Error ${response.status}:`, errorText);
                 throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
             }
-
-            const result = await response.json();
-            console.log('✅ Respuesta exitosa:', result);
-            return result;
-
+            return await response.json();
         } catch (err) {
-            console.error('❌ Error completo:', err);
-            console.error('URL que falló:', SAVE_LEVEL_PATH);
-            console.error('Datos enviados:', data);
-
-            // ✅ Mostrar error en pantalla para debugging
-            alert(`Error al guardar: ${err.message}\nURL: ${SAVE_LEVEL_PATH}`);
+            console.error('Error guardando score:', err);
             return null;
         }
     }

@@ -44,8 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Sprite::class, mappedBy: 'user_id')]
     private Collection $sprites;
 
-    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'user')]
-    private Collection $players;
+    #[ORM\OneToMany(targetEntity: UserPlayer::class, mappedBy: 'user')]
+    private Collection $userPlayers;
 
     public function __construct()
     {
@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userLevels = new ArrayCollection();
         $this->scores = new ArrayCollection();
         $this->sprites = new ArrayCollection();
-        $this->players = new ArrayCollection();
+        $this->userPlayers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,7 +99,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        // 👇 Podés cambiar esto a $this->email si querés que el login sea por email
         return (string) $this->email;
     }
 
@@ -133,32 +132,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Player>
+     * @return Collection<int, UserPlayer>
      */
-    public function getPlayers(): Collection
+    public function getUserPlayers(): Collection
     {
-        return $this->players;
+        return $this->userPlayers;
     }
 
-    public function addPlayer(Player $player): static
+    public function addUserPlayer(UserPlayer $userPlayer): static
     {
-        if (!$this->players->contains($player)) {
-            $this->players->add($player);
-            $player->setUser($this);
+        if (!$this->userPlayers->contains($userPlayer)) {
+            $this->userPlayers->add($userPlayer);
+            $userPlayer->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePlayer(Player $player): static
+    public function removeUserPlayer(UserPlayer $userPlayer): static
     {
-        if ($this->players->removeElement($player)) {
+        if ($this->userPlayers->removeElement($userPlayer)) {
             // set the owning side to null (unless already changed)
-            if ($player->getUser() === $this) {
-                $player->setUser(null);
+            if ($userPlayer->getUser() === $this) {
+                $userPlayer->setUser(null);
             }
         }
 
         return $this;
     }
+
 }

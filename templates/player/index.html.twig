@@ -11,9 +11,12 @@
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Nivel</th>
+                <th>name_sprite</th>
                 <th>Experiencia</th>
                 <th>Vida_actual</th>
                 <th>Vida_maxima</th>
+                <th>Velocidad</th>
+                <th>Fuerza de salto</th>
                 <th>Fecha_creacion</th>
                 <th>Ultima_conexion</th>
                 <th>actions</th>
@@ -25,9 +28,12 @@
                 <td>{{ player.id }}</td>
                 <td>{{ player.nombre }}</td>
                 <td>{{ player.nivel }}</td>
+                <td>{{ player.nameSprite  }}</td>
                 <td>{{ player.experiencia }}</td>
                 <td>{{ player.vidaActual }}</td>
                 <td>{{ player.vidaMaxima }}</td>
+                <td>{{ player.speed }}</td>
+                <td>{{ player.jumpSpeed }}</td>
                 <td>{{ player.fechaCreacion ? player.fechaCreacion|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ player.ultimaConexion ? player.ultimaConexion|date('Y-m-d H:i:s') : '' }}</td>
                 <td>

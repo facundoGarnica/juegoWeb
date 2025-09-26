@@ -17,13 +17,53 @@
 
 <div class="version">v1.0.0</div>
 
+<div id="modal-jugador" class="modal">
+  <div class="modal-contenido">
+    <button class="close-player-modal">&times;</button>
+    <h2 class="player-modal-title">SELECCIONAR PERSONAJE</h2>
+
+    <!-- Carrusel -->
+    <div class="character-carousel">
+      <div class="character-track">
+        {% for player in players %}
+          <div class="character-item" data-character-id="{{ player.id }}">
+              <div class="character-name">{{ player.nombre }}</div>
+              <img src="{{ asset('images/ArrayRun/sprites/' ~ player.nameSprite ~ '/derecha_estar.png') }}" 
+              alt="{{ player.nombre }}" class="character-image">
+
+          </div>
+      {% endfor %}
+
+      </div>
+
+      <!-- Controles -->
+      <button class="character-control prev">&#8249;</button>
+      <button class="character-control next">&#8250;</button>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="character-indicators">
+      <div class="character-indicator active"></div>
+      <div class="character-indicator"></div>
+    </div>
+
+    <!-- Botones -->
+    <div class="modal-buttons">
+      <button class="select-character-btn" onclick="acceptCharacter()">ACEPTAR</button>
+      <!-- 🔴 corregido: usa closeCharacterModal -->
+      <button class="back-btn" onclick="closeCharacterModal()">REGRESAR</button>
+    </div>
+  </div>
+</div>
+
+
 <div id="modalNivel">
     <div class="modal-content">
         <button class="close-btn">×</button>
         <h2 class="modal-title">SELECCIONAR NIVEL</h2>
 
         <div class="niveles-grid" id="nivelesGrid"></div>
-
+          {#  <div> {{app.user.username}}</div>#}
         <div class="nivel-info">
             <h3>Selecciona un nivel</h3>
             <p></p>
@@ -39,17 +79,19 @@
 </div>
 
 <script>
-    window.playerId = {{ app.user.players|first.id ?? 'null' }};
+    window.playerId = {{ app.user.userPlayers|first.player.id ?? 'null' }};
+    window.gameId = {{ game.id }};
+    console.log("game id en menu:", window.gameId);
     window.apiConfig = {
         levelsByGameUrl: "{{ path('api_levels_by_game', {'gameId': game.id}) }}",
         userLevelUrl: "{{ path('app_user_level_by_player_and_level', {'playerId': '__PLAYER__', 'levelId': '__LEVEL__'}) }}",
+        assignAllPlayersUrl: "{{ path('app_assign_all_players', {'userId': app.user.id, 'gameId': game.id}) }}",
         nivelUrlTemplate: "/nivelarray/__NUM__" // <-- placeholder válido en JS
+        
     };
 </script>
 
 <script src="{{ asset('js/ArrayRunMenu.js') }}"></script>
-
-
 
 
 {% endblock %}

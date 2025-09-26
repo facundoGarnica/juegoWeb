@@ -25,10 +25,10 @@ class SecurityController extends AbstractController
         ]);
     }
     
-    #[Route('/login_check', name: 'app_login_check')]  // 👈 Cambié /login/check a /login_check
+    #[Route('/login_check', name: 'app_login_check')]
     public function loginCheck(): void
     {
-        // Symfony se encargará del login, no necesitas implementar nada aquí
+        
     }
     
     #[Route('/logout', name: 'app_logout')]

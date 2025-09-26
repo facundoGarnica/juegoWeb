@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\UserLevel;
@@ -41,8 +40,9 @@ class UserLevelRepository extends ServiceEntityRepository
     public function findTopScoresByGame($game, int $limit = 4): array
     {
         return $this->createQueryBuilder('ul')
+            ->join('ul.player', 'p')
             ->andWhere('ul.completado = :val')
-            ->andWhere('ul.game = :game')
+            ->andWhere('p.game = :game')
             ->setParameter('val', true)
             ->setParameter('game', $game)
             ->orderBy('ul.puntosObtenidos', 'DESC')
@@ -62,5 +62,22 @@ class UserLevelRepository extends ServiceEntityRepository
             ->setParameter('levelId', $levelId)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    // 🔹 MÉTODO CORREGIDO: Ahora usa la relación directa User
+    public function findTopScoresByGameWithUsers($game, int $limit = 4): array
+    {
+        return $this->createQueryBuilder('ul')
+            ->select('ul', 'p', 'u') // Solo las entidades necesarias
+            ->join('ul.player', 'p')
+            ->join('ul.user', 'u') // 🔹 JOIN directo al User que jugó ese nivel
+            ->andWhere('ul.completado = :val')
+            ->andWhere('p.game = :game')
+            ->setParameter('val', true)
+            ->setParameter('game', $game)
+            ->orderBy('ul.puntosObtenidos', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }

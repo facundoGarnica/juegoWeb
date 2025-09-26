@@ -30,6 +30,10 @@ class UserLevel
     #[ORM\ManyToOne(inversedBy: 'userLevels')]
     private ?Game $game = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userLevels')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -98,6 +102,18 @@ class UserLevel
     public function setGame(?Game $game): static
     {
         $this->game = $game;
+        return $this;
+    }
+
+    // 🔹 NUEVOS MÉTODOS para User
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }
